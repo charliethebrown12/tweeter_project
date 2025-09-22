@@ -1,12 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
-import { AuthToken, FakeData, Status, Type, User } from "tweeter-shared";
-import { ToastType } from "../toaster/Toast";
-import { useContext } from "react";
-import { ToastActionsContext } from "../toaster/ToastContexts";
-import {
-  UserInfoActionsContext,
-  UserInfoContext,
-} from "../userInfo/UserInfoContexts";
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthToken, FakeData, Status, Type, User } from 'tweeter-shared';
+import { ToastType } from '../toaster/Toast';
+import { useContext } from 'react';
+import { ToastActionsContext } from '../toaster/ToastContexts';
+import { UserInfoActionsContext, UserInfoContext } from '../userInfo/UserInfoContexts';
 
 interface Props {
   status: Status;
@@ -34,23 +31,16 @@ const Post = (props: Props) => {
         }
       }
     } catch (error) {
-      displayToast(
-        ToastType.Error,
-        `Failed to get user because of exception: ${error}`,
-        0
-      );
+      displayToast(ToastType.Error, `Failed to get user because of exception: ${error}`, 0);
     }
   };
 
   const extractAlias = (value: string): string => {
-    const index = value.indexOf("@");
+    const index = value.indexOf('@');
     return value.substring(index);
   };
 
-  const getUser = async (
-    authToken: AuthToken,
-    alias: string
-  ): Promise<User | null> => {
+  const getUser = async (authToken: AuthToken, alias: string): Promise<User | null> => {
     // TODO: Replace with the result of calling server
     return FakeData.instance.findUserByAlias(alias);
   };
@@ -59,27 +49,18 @@ const Post = (props: Props) => {
     <>
       {props.status.segments.map((segment, index) =>
         segment.type === Type.alias ? (
-          <Link
-            key={index}
-            to={`${props.featurePath}/${segment.text}`}
-            onClick={navigateToUser}
-          >
+          <Link key={index} to={`${props.featurePath}/${segment.text}`} onClick={navigateToUser}>
             {segment.text}
           </Link>
         ) : segment.type === Type.url ? (
-          <a
-            key={index}
-            href={segment.text}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a key={index} href={segment.text} target="_blank" rel="noopener noreferrer">
             {segment.text}
           </a>
         ) : segment.type === Type.newline ? (
           <br key={index} />
         ) : (
           segment.text
-        )
+        ),
       )}
     </>
   );

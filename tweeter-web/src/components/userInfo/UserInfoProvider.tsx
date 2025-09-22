@@ -1,20 +1,17 @@
-import { useCallback, useMemo, useState } from "react";
-import { User, AuthToken } from "tweeter-shared";
-import { UserInfoContext, UserInfoActionsContext } from "./UserInfoContexts";
-import { UserInfo } from "./UserInfo";
+import { useCallback, useMemo, useState } from 'react';
+import { User, AuthToken } from 'tweeter-shared';
+import { UserInfoContext, UserInfoActionsContext } from './UserInfoContexts';
+import { UserInfo } from './UserInfo';
 
-const CURRENT_USER_KEY: string = "CurrentUserKey";
-const AUTH_TOKEN_KEY: string = "AuthTokenKey";
+const CURRENT_USER_KEY: string = 'CurrentUserKey';
+const AUTH_TOKEN_KEY: string = 'AuthTokenKey';
 
 interface Props {
   children: React.ReactNode;
 }
 
 const UserInfoProvider: React.FC<Props> = ({ children }) => {
-  const saveToLocalStorage = (
-    currentUser: User,
-    authToken: AuthToken
-  ): void => {
+  const saveToLocalStorage = (currentUser: User, authToken: AuthToken): void => {
     localStorage.setItem(CURRENT_USER_KEY, currentUser.toJson());
     localStorage.setItem(AUTH_TOKEN_KEY, authToken.toJson());
   };
@@ -48,7 +45,7 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
       currentUser: User,
       displayedUser: User | null,
       authToken: AuthToken,
-      remember: boolean = false
+      remember: boolean = false,
     ) => {
       setUserInfo(() => {
         return {
@@ -62,7 +59,7 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
         saveToLocalStorage(currentUser, authToken);
       }
     },
-    []
+    [],
   );
 
   const clearUserInfo = useCallback(() => {
@@ -89,7 +86,7 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
       clearUserInfo,
       setDisplayedUser,
     }),
-    [updateUserInfo, clearUserInfo, setDisplayedUser]
+    [updateUserInfo, clearUserInfo, setDisplayedUser],
   );
 
   return (

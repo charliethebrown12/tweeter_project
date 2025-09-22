@@ -1,11 +1,11 @@
-import { AuthToken } from "../model/domain/AuthToken";
-import { Status } from "../model/domain/Status";
-import { User } from "../model/domain/User";
+import { AuthToken } from '../model/domain/AuthToken';
+import { Status } from '../model/domain/Status';
+import { User } from '../model/domain/User';
 
 const MALE_IMAGE_URL: string =
-  "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
+  'https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png';
 const FEMALE_IMAGE_URL: string =
-  "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/daisy_duck.png";
+  'https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/daisy_duck.png';
 
 export class FakeData {
   private readonly _authToken: AuthToken = AuthToken.Generate();
@@ -15,28 +15,28 @@ export class FakeData {
   }
 
   private readonly allUsers: User[] = [
-    new User("Allen", "Anderson", "@allen", MALE_IMAGE_URL),
-    new User("Amy", "Ames", "@amy", FEMALE_IMAGE_URL),
-    new User("Bob", "Bobson", "@bob", MALE_IMAGE_URL),
-    new User("Bonnie", "Beatty", "@bonnie", FEMALE_IMAGE_URL),
-    new User("Chris", "Colston", "@chris", MALE_IMAGE_URL),
-    new User("Cindy", "Coats", "@cindy", FEMALE_IMAGE_URL),
-    new User("Dan", "Donaldson", "@dan", MALE_IMAGE_URL),
-    new User("Dee", "Dempsey", "@dee", FEMALE_IMAGE_URL),
-    new User("Elliott", "Enderson", "@elliott", MALE_IMAGE_URL),
-    new User("Elizabeth", "Engle", "@elizabeth", FEMALE_IMAGE_URL),
-    new User("Frank", "Frandson", "@frank", MALE_IMAGE_URL),
-    new User("Fran", "Franklin", "@fran", FEMALE_IMAGE_URL),
-    new User("Gary", "Gilbert", "@gary", MALE_IMAGE_URL),
-    new User("Giovanna", "Giles", "@giovanna", FEMALE_IMAGE_URL),
-    new User("Henry", "Henderson", "@henry", MALE_IMAGE_URL),
-    new User("Helen", "Hopwell", "@helen", FEMALE_IMAGE_URL),
-    new User("Igor", "Isaacson", "@igor", MALE_IMAGE_URL),
-    new User("Isabel", "Isaacson", "@isabel", FEMALE_IMAGE_URL),
-    new User("Justin", "Jones", "@justin", MALE_IMAGE_URL),
-    new User("Jill", "Johnson", "@jill", FEMALE_IMAGE_URL),
-    new User("Kent", "Knudson", "@kent", MALE_IMAGE_URL),
-    new User("Kathy", "Kunzler", "@kathy", FEMALE_IMAGE_URL),
+    new User('Allen', 'Anderson', '@allen', MALE_IMAGE_URL),
+    new User('Amy', 'Ames', '@amy', FEMALE_IMAGE_URL),
+    new User('Bob', 'Bobson', '@bob', MALE_IMAGE_URL),
+    new User('Bonnie', 'Beatty', '@bonnie', FEMALE_IMAGE_URL),
+    new User('Chris', 'Colston', '@chris', MALE_IMAGE_URL),
+    new User('Cindy', 'Coats', '@cindy', FEMALE_IMAGE_URL),
+    new User('Dan', 'Donaldson', '@dan', MALE_IMAGE_URL),
+    new User('Dee', 'Dempsey', '@dee', FEMALE_IMAGE_URL),
+    new User('Elliott', 'Enderson', '@elliott', MALE_IMAGE_URL),
+    new User('Elizabeth', 'Engle', '@elizabeth', FEMALE_IMAGE_URL),
+    new User('Frank', 'Frandson', '@frank', MALE_IMAGE_URL),
+    new User('Fran', 'Franklin', '@fran', FEMALE_IMAGE_URL),
+    new User('Gary', 'Gilbert', '@gary', MALE_IMAGE_URL),
+    new User('Giovanna', 'Giles', '@giovanna', FEMALE_IMAGE_URL),
+    new User('Henry', 'Henderson', '@henry', MALE_IMAGE_URL),
+    new User('Helen', 'Hopwell', '@helen', FEMALE_IMAGE_URL),
+    new User('Igor', 'Isaacson', '@igor', MALE_IMAGE_URL),
+    new User('Isabel', 'Isaacson', '@isabel', FEMALE_IMAGE_URL),
+    new User('Justin', 'Jones', '@justin', MALE_IMAGE_URL),
+    new User('Jill', 'Johnson', '@jill', FEMALE_IMAGE_URL),
+    new User('Kent', 'Knudson', '@kent', MALE_IMAGE_URL),
+    new User('Kathy', 'Kunzler', '@kathy', FEMALE_IMAGE_URL),
   ];
 
   // Allows mocking of fake users
@@ -72,9 +72,7 @@ export class FakeData {
     // eslint-disable-next-line no-self-compare
     if (this.fakeUsers !== this.fakeUsers) {
       // Verify that this.fakeUsers always returns the same list of users (this could be violated by mock implementations of fakeUsers)
-      throw new Error(
-        "fakeUsers should return the same list of fake users each time it's called"
-      );
+      throw new Error("fakeUsers should return the same list of fake users each time it's called");
     }
 
     if (this.fakeUsers !== this.fakeUsersUsedToGenerateStatuses) {
@@ -85,7 +83,7 @@ export class FakeData {
     if (this.fakeStatuses !== this.fakeStatuses) {
       // Verify that this.fakeStatuses always returns the same list of users (this could be violated by mock implementations of fakeStatuses)
       throw new Error(
-        "fakeStatuses should return the same list of fake statuses each time it's called"
+        "fakeStatuses should return the same list of fake statuses each time it's called",
       );
     }
   }
@@ -99,16 +97,12 @@ export class FakeData {
     for (let i = 0; i < 2; i++) {
       for (let j = 0; j < this.fakeUsers.length; j++) {
         const sender = this.fakeUsers[j];
-        const mention =
-          j < this.fakeUsers.length - 1
-            ? this.fakeUsers[j + 1]
-            : this.fakeUsers[0];
+        const mention = j < this.fakeUsers.length - 1 ? this.fakeUsers[j + 1] : this.fakeUsers[0];
 
         const post = `Post ${i} ${j}
         My friend ${mention.alias} likes this website: http://byu.edu. Do you? 
         Or do you prefer this one: http://cs.byu.edu?`;
-        const timestamp =
-          timestampStart + 30000000000 * (i * this.fakeUsers.length + j);
+        const timestamp = timestampStart + 30000000000 * (i * this.fakeUsers.length + j);
         const status = new Status(post, sender, timestamp);
         this.allStatuses.push(status);
       }
@@ -165,7 +159,7 @@ export class FakeData {
   public getPageOfUsers(
     lastUser: User | null,
     limit: number,
-    omit: string | null
+    omit: string | null,
   ): [User[], boolean] {
     let userIndex = 0;
 
@@ -202,10 +196,7 @@ export class FakeData {
    * @param limit - maximum number of statuses to return (i.e., page size).
    * @returns a tuple containing a page of statuses and a "hasMorePages" flag.
    */
-  public getPageOfStatuses(
-    lastStatus: Status | null,
-    limit: number
-  ): [Status[], boolean] {
+  public getPageOfStatuses(lastStatus: Status | null, limit: number): [Status[], boolean] {
     let statusIndex = 0;
 
     // Find the index of the first status to be returned
@@ -235,13 +226,13 @@ export class FakeData {
    * Returns a followers count for the user, as a random number between 1 and 10.
    */
   public getFollowerCount(userAlias: string): number | PromiseLike<number> {
-    return Math.floor(Math.random() * 10) + 1
+    return Math.floor(Math.random() * 10) + 1;
   }
 
   /**
    * Returns a followees count for the user, as a random number between 1 and 10.
    */
   public getFolloweeCount(userAlias: string): number | PromiseLike<number> {
-    return Math.floor(Math.random() * 10) + 1
+    return Math.floor(Math.random() * 10) + 1;
   }
 }

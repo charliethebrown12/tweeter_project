@@ -1,23 +1,23 @@
-import "./Register.css";
-import "bootstrap/dist/css/bootstrap.css";
-import { useContext } from "react";
-import { UserInfoActionsContext } from "../../userInfo/UserInfoContexts";
-import { ChangeEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import AuthenticationFormLayout from "../AuthenticationFormLayout";
-import { AuthToken, FakeData, User } from "tweeter-shared";
-import { ToastActionsContext } from "../../toaster/ToastContexts";
-import { Buffer } from "buffer";
-import { ToastType } from "../../toaster/Toast";
+import './Register.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import { useContext } from 'react';
+import { UserInfoActionsContext } from '../../userInfo/UserInfoContexts';
+import { ChangeEvent, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthenticationFormLayout from '../AuthenticationFormLayout';
+import { AuthToken, FakeData, User } from 'tweeter-shared';
+import { ToastActionsContext } from '../../toaster/ToastContexts';
+import { Buffer } from 'buffer';
+import { ToastType } from '../../toaster/Toast';
 
 const Register = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [alias, setAlias] = useState("");
-  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [alias, setAlias] = useState('');
+  const [password, setPassword] = useState('');
   const [imageBytes, setImageBytes] = useState<Uint8Array>(new Uint8Array());
-  const [imageUrl, setImageUrl] = useState<string>("");
-  const [imageFileExtension, setImageFileExtension] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageFileExtension, setImageFileExtension] = useState<string>('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,18 +26,11 @@ const Register = () => {
   const { displayToast } = useContext(ToastActionsContext);
 
   const checkSubmitButtonStatus = (): boolean => {
-    return (
-      !firstName ||
-      !lastName ||
-      !alias ||
-      !password ||
-      !imageUrl ||
-      !imageFileExtension
-    );
+    return !firstName || !lastName || !alias || !password || !imageUrl || !imageFileExtension;
   };
 
   const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key == "Enter" && !checkSubmitButtonStatus()) {
+    if (event.key == 'Enter' && !checkSubmitButtonStatus()) {
       doRegister();
     }
   };
@@ -56,13 +49,9 @@ const Register = () => {
         const imageStringBase64 = event.target?.result as string;
 
         // Remove unnecessary file metadata from the start of the string.
-        const imageStringBase64BufferContents =
-          imageStringBase64.split("base64,")[1];
+        const imageStringBase64BufferContents = imageStringBase64.split('base64,')[1];
 
-        const bytes: Uint8Array = Buffer.from(
-          imageStringBase64BufferContents,
-          "base64"
-        );
+        const bytes: Uint8Array = Buffer.from(imageStringBase64BufferContents, 'base64');
 
         setImageBytes(bytes);
       };
@@ -74,13 +63,13 @@ const Register = () => {
         setImageFileExtension(fileExtension);
       }
     } else {
-      setImageUrl("");
+      setImageUrl('');
       setImageBytes(new Uint8Array());
     }
   };
 
   const getFileExtension = (file: File): string | undefined => {
-    return file.name.split(".").pop();
+    return file.name.split('.').pop();
   };
 
   const doRegister = async () => {
@@ -93,17 +82,13 @@ const Register = () => {
         alias,
         password,
         imageBytes,
-        imageFileExtension
+        imageFileExtension,
       );
 
       updateUserInfo(user, user, authToken, rememberMe);
       navigate(`/feed/${user.alias}`);
     } catch (error) {
-      displayToast(
-        ToastType.Error,
-        `Failed to register user because of exception: ${error}`,
-        0
-      );
+      displayToast(ToastType.Error, `Failed to register user because of exception: ${error}`, 0);
     } finally {
       setIsLoading(false);
     }
@@ -115,17 +100,16 @@ const Register = () => {
     alias: string,
     password: string,
     userImageBytes: Uint8Array,
-    imageFileExtension: string
+    imageFileExtension: string,
   ): Promise<[User, AuthToken]> => {
     // Not neded now, but will be needed when you make the request to the server in milestone 3
-    const imageStringBase64: string =
-      Buffer.from(userImageBytes).toString("base64");
+    const imageStringBase64: string = Buffer.from(userImageBytes).toString('base64');
 
     // TODO: Replace with the result of calling the server
     const user = FakeData.instance.firstUser;
 
     if (user === null) {
-      throw new Error("Invalid registration");
+      throw new Error('Invalid registration');
     }
 
     return [user, FakeData.instance.authToken];

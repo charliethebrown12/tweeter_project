@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
-import { Toast, ToastType, makeToast } from "./Toast";
-import PropTypes from "prop-types";
-import { ToastListContext, ToastActionsContext } from "./ToastContexts";
+import { useCallback, useMemo, useState } from 'react';
+import { Toast, ToastType, makeToast } from './Toast';
+import PropTypes from 'prop-types';
+import { ToastListContext, ToastActionsContext } from './ToastContexts';
 
 interface Props {
   children: React.ReactNode;
@@ -20,19 +20,13 @@ const ToastInfoProvider: React.FC<Props> = ({ children }) => {
       message: string,
       duration: number,
       title?: string,
-      bootstrapClasses?: string
+      bootstrapClasses?: string,
     ): string => {
-      const toast = makeToast(
-        toastType,
-        message,
-        duration,
-        title,
-        bootstrapClasses
-      );
+      const toast = makeToast(toastType, message, duration, title, bootstrapClasses);
       displayExistingToast(toast);
       return toast.id;
     },
-    [displayExistingToast]
+    [displayExistingToast],
   );
 
   const deleteToast = useCallback((id: string) => {
@@ -53,14 +47,12 @@ const ToastInfoProvider: React.FC<Props> = ({ children }) => {
       deleteToast,
       deleteAllToasts,
     }),
-    [displayExistingToast, displayToast, deleteToast, deleteAllToasts]
+    [displayExistingToast, displayToast, deleteToast, deleteAllToasts],
   );
 
   return (
     <ToastListContext.Provider value={toastList}>
-      <ToastActionsContext.Provider value={toastActions}>
-        {children}
-      </ToastActionsContext.Provider>
+      <ToastActionsContext.Provider value={toastActions}>{children}</ToastActionsContext.Provider>
     </ToastListContext.Provider>
   );
 };

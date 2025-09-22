@@ -1,15 +1,12 @@
-import { useContext } from "react";
-import {
-  UserInfoContext,
-  UserInfoActionsContext,
-} from "../userInfo/UserInfoContexts";
-import { useState, useEffect } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { AuthToken, FakeData, User } from "tweeter-shared";
-import { ToastActionsContext } from "../toaster/ToastContexts";
-import { useParams } from "react-router-dom";
-import { ToastType } from "../toaster/Toast";
-import UserItem from "../userItem/UserItem";
+import { useContext } from 'react';
+import { UserInfoContext, UserInfoActionsContext } from '../userInfo/UserInfoContexts';
+import { useState, useEffect } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { AuthToken, FakeData, User } from 'tweeter-shared';
+import { ToastActionsContext } from '../toaster/ToastContexts';
+import { useParams } from 'react-router-dom';
+import { ToastType } from '../toaster/Toast';
+import UserItem from '../userItem/UserItem';
 
 export const PAGE_SIZE = 10;
 
@@ -26,21 +23,14 @@ const FollowersScroller = () => {
   const { setDisplayedUser } = useContext(UserInfoActionsContext);
   const { displayedUser: displayedUserAliasParam } = useParams();
 
-  const getUser = async (
-    authToken: AuthToken,
-    alias: string
-  ): Promise<User | null> => {
+  const getUser = async (authToken: AuthToken, alias: string): Promise<User | null> => {
     // TODO: Replace with the result of calling server
     return FakeData.instance.findUserByAlias(alias);
   };
 
   // Update the displayed user context variable whenever the displayedUser url parameter changes. This allows browser forward and back buttons to work correctly.
   useEffect(() => {
-    if (
-      authToken &&
-      displayedUserAliasParam &&
-      displayedUserAliasParam != displayedUser!.alias
-    ) {
+    if (authToken && displayedUserAliasParam && displayedUserAliasParam != displayedUser!.alias) {
       getUser(authToken!, displayedUserAliasParam!).then((toUser) => {
         if (toUser) {
           setDisplayedUser(toUser);
@@ -67,18 +57,14 @@ const FollowersScroller = () => {
         authToken!,
         displayedUser!.alias,
         PAGE_SIZE,
-        lastItem
+        lastItem,
       );
 
       setHasMoreItems(() => hasMore);
       setLastItem(() => newItems[newItems.length - 1]);
       addItems(newItems);
     } catch (error) {
-      displayToast(
-        ToastType.Error,
-        `Failed to load followers because of exception: ${error}`,
-        0
-      );
+      displayToast(ToastType.Error, `Failed to load followers because of exception: ${error}`, 0);
     }
   };
 
@@ -86,7 +72,7 @@ const FollowersScroller = () => {
     authToken: AuthToken,
     userAlias: string,
     pageSize: number,
-    lastFollower: User | null
+    lastFollower: User | null,
   ): Promise<[User[], boolean]> => {
     // TODO: Replace with the result of calling server
     return FakeData.instance.getPageOfUsers(lastFollower, pageSize, userAlias);
@@ -102,10 +88,7 @@ const FollowersScroller = () => {
         loader={<h4>Loading...</h4>}
       >
         {items.map((item, index) => (
-          <div
-            key={index}
-            className="row mb-3 mx-0 px-0 border rounded bg-white"
-          >
+          <div key={index} className="row mb-3 mx-0 px-0 border rounded bg-white">
             <UserItem user={item} featurePath="/followers" />
           </div>
         ))}

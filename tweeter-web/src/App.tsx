@@ -1,21 +1,15 @@
-import "./App.css";
-import { useContext } from "react";
-import { UserInfoContext } from "./components/userInfo/UserInfoContexts";
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
-import Login from "./components/authentication/login/Login";
-import Register from "./components/authentication/register/Register";
-import MainLayout from "./components/mainLayout/MainLayout";
-import Toaster from "./components/toaster/Toaster";
-import FolloweesScroller from "./components/mainLayout/FolloweesScroller";
-import FollowersScroller from "./components/mainLayout/FollowersScroller";
-import FeedScroller from "./components/mainLayout/FeedScroller";
-import StoryScroller from "./components/mainLayout/StoryScroller";
+import './App.css';
+import { useContext } from 'react';
+import { UserInfoContext } from './components/userInfo/UserInfoContexts';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import Login from './components/authentication/login/Login';
+import Register from './components/authentication/register/Register';
+import MainLayout from './components/mainLayout/MainLayout';
+import Toaster from './components/toaster/Toaster';
+import FolloweesScroller from './components/mainLayout/FolloweesScroller';
+import FollowersScroller from './components/mainLayout/FollowersScroller';
+import FeedScroller from './components/mainLayout/FeedScroller';
+import StoryScroller from './components/mainLayout/StoryScroller';
 
 const App = () => {
   const { currentUser, authToken } = useContext(UserInfoContext);
@@ -28,11 +22,7 @@ const App = () => {
     <div>
       <Toaster position="top-right" />
       <BrowserRouter>
-        {isAuthenticated() ? (
-          <AuthenticatedRoutes />
-        ) : (
-          <UnauthenticatedRoutes />
-        )}
+        {isAuthenticated() ? <AuthenticatedRoutes /> : <UnauthenticatedRoutes />}
       </BrowserRouter>
     </div>
   );

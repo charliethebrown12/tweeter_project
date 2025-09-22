@@ -4,12 +4,7 @@ export class User {
   private _alias: string;
   private _imageUrl: string;
 
-  public constructor(
-    firstName: string,
-    lastName: string,
-    alias: string,
-    imageUrl: string
-  ) {
+  public constructor(firstName: string, lastName: string, alias: string, imageUrl: string) {
     this._firstName = firstName;
     this._lastName = lastName;
     this._alias = alias;
@@ -68,7 +63,7 @@ export class User {
         jsonObject._firstName,
         jsonObject._lastName,
         jsonObject._alias,
-        jsonObject._imageUrl
+        jsonObject._imageUrl,
       );
     } else {
       return null;

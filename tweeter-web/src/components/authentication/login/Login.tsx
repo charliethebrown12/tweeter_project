@@ -1,21 +1,21 @@
-import "./Login.css";
-import "bootstrap/dist/css/bootstrap.css";
-import { useContext } from "react";
-import { UserInfoActionsContext } from "../../userInfo/UserInfoContexts";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import AuthenticationFormLayout from "../AuthenticationFormLayout";
-import { AuthToken, FakeData, User } from "tweeter-shared";
-import { ToastActionsContext } from "../../toaster/ToastContexts";
-import { ToastType } from "../../toaster/Toast";
+import './Login.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import { useContext } from 'react';
+import { UserInfoActionsContext } from '../../userInfo/UserInfoContexts';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthenticationFormLayout from '../AuthenticationFormLayout';
+import { AuthToken, FakeData, User } from 'tweeter-shared';
+import { ToastActionsContext } from '../../toaster/ToastContexts';
+import { ToastType } from '../../toaster/Toast';
 
 interface Props {
   originalUrl?: string;
 }
 
 const Login = (props: Props) => {
-  const [alias, setAlias] = useState("");
-  const [password, setPassword] = useState("");
+  const [alias, setAlias] = useState('');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,7 +28,7 @@ const Login = (props: Props) => {
   };
 
   const loginOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key == "Enter" && !checkSubmitButtonStatus()) {
+    if (event.key == 'Enter' && !checkSubmitButtonStatus()) {
       doLogin();
     }
   };
@@ -47,25 +47,18 @@ const Login = (props: Props) => {
         navigate(`/feed/${user.alias}`);
       }
     } catch (error) {
-      displayToast(
-        ToastType.Error,
-        `Failed to log user in because of exception: ${error}`,
-        0
-      );
+      displayToast(ToastType.Error, `Failed to log user in because of exception: ${error}`, 0);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = async (
-    alias: string,
-    password: string
-  ): Promise<[User, AuthToken]> => {
+  const login = async (alias: string, password: string): Promise<[User, AuthToken]> => {
     // TODO: Replace with the result of calling the server
     const user = FakeData.instance.firstUser;
 
     if (user === null) {
-      throw new Error("Invalid alias or password");
+      throw new Error('Invalid alias or password');
     }
 
     return [user, FakeData.instance.authToken];

@@ -1,8 +1,8 @@
 export enum Type {
-  text = "Text",
-  alias = "Alias",
-  url = "URL",
-  newline = "Newline",
+  text = 'Text',
+  alias = 'Alias',
+  url = 'URL',
+  newline = 'Newline',
 }
 
 export class PostSegment {
@@ -11,12 +11,7 @@ export class PostSegment {
   private _endPosition: number;
   private _type: Type;
 
-  public constructor(
-    text: string,
-    startPosition: number,
-    endPosition: number,
-    type: Type
-  ) {
+  public constructor(text: string, startPosition: number, endPosition: number, type: Type) {
     this._text = text;
     this._startPostion = startPosition;
     this._endPosition = endPosition;
