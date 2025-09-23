@@ -9,6 +9,7 @@ import { AuthToken, FakeData, User } from 'tweeter-shared';
 import { ToastActionsContext } from '../../toaster/ToastContexts';
 import { Buffer } from 'buffer';
 import { ToastType } from '../../toaster/Toast';
+import AuthenticationFields from '../AuthenticationFields';
 
 const Register = () => {
   const [firstName, setFirstName] = useState('');
@@ -118,53 +119,22 @@ const Register = () => {
   const inputFieldFactory = () => {
     return (
       <>
-        <div className="form-floating">
-          <input
-            type="text"
-            className="form-control"
-            size={50}
-            id="firstNameInput"
-            placeholder="First Name"
-            onKeyDown={registerOnEnter}
-            onChange={(event) => setFirstName(event.target.value)}
-          />
-          <label htmlFor="firstNameInput">First Name</label>
-        </div>
-        <div className="form-floating">
-          <input
-            type="text"
-            className="form-control"
-            size={50}
-            id="lastNameInput"
-            placeholder="Last Name"
-            onKeyDown={registerOnEnter}
-            onChange={(event) => setLastName(event.target.value)}
-          />
-          <label htmlFor="lastNameInput">Last Name</label>
-        </div>
-        <div className="form-floating">
-          <input
-            type="text"
-            className="form-control"
-            size={50}
-            id="aliasInput"
-            placeholder="name@example.com"
-            onKeyDown={registerOnEnter}
-            onChange={(event) => setAlias(event.target.value)}
-          />
-          <label htmlFor="aliasInput">Alias</label>
-        </div>
-        <div className="form-floating">
-          <input
-            type="password"
-            className="form-control"
-            id="passwordInput"
-            placeholder="Password"
-            onKeyDown={registerOnEnter}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <label htmlFor="passwordInput">Password</label>
-        </div>
+            <AuthenticationFields id="firstNameInput" label="First Name" placeholder="First Name" type="text"
+        onKeyDown={registerOnEnter}
+        onChange={(event) => setFirstName(event.target.value)}
+      />
+            <AuthenticationFields id="lastNameInput" label="Last Name" placeholder="Last Name" type="text"
+        onKeyDown={registerOnEnter}
+        onChange={(event) => setLastName(event.target.value)}
+      />
+            <AuthenticationFields id="aliasInput" label="Alias" placeholder="name@example.com" type="text"
+        onKeyDown={registerOnEnter}
+        onChange={(event) => setAlias(event.target.value)}
+      />
+            <AuthenticationFields id="passwordInput" label="Password" placeholder="Password" type="password"
+        onKeyDown={registerOnEnter}
+        onChange={(event) => setPassword(event.target.value)}
+      />
         <div className="form-floating mb-3">
           <input
             type="file"
