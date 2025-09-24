@@ -1,20 +1,16 @@
 import './App.css';
-import { useContext } from 'react';
-import { UserInfoContext } from './components/userInfo/UserInfoContexts';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Login from './components/authentication/login/Login';
 import Register from './components/authentication/register/Register';
 import MainLayout from './components/mainLayout/MainLayout';
 import Toaster from './components/toaster/Toaster';
-import FeedScroller from './components/mainLayout/FeedScroller';
-import StoryScroller from './components/mainLayout/StoryScroller';
-import UserItem from './components/userItem/UserItem';
 import UserItemScroller from './components/mainLayout/UserItemScroller';
 import { AuthToken, User, FakeData, Status } from 'tweeter-shared';
 import StatusItemScroller from './components/mainLayout/StatusItemScroller';
+import { useUserInfo } from './components/userInfo/UserHooks';
 
 const App = () => {
-  const { currentUser, authToken } = useContext(UserInfoContext);
+  const { currentUser, authToken } = useUserInfo();
 
   const isAuthenticated = (): boolean => {
     return !!currentUser && !!authToken;
@@ -31,7 +27,7 @@ const App = () => {
 };
 
 const AuthenticatedRoutes = () => {
-  const { displayedUser } = useContext(UserInfoContext);
+  const { displayedUser } = useUserInfo();
 
   const loadMoreFollowees = async (
     authToken: AuthToken,

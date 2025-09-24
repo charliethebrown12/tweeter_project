@@ -1,9 +1,8 @@
 import { AuthToken, FakeData, Status, User } from 'tweeter-shared';
 import { Link, useNavigate } from 'react-router-dom';
 import Post from './Post';
-import { useContext } from 'react';
-import { UserInfoActionsContext, UserInfoContext } from '../userInfo/UserInfoContexts';
 import { useMessageActions } from '../toaster/MessageHooks';
+import { useUserInfo, useUserInfoActions } from '../userInfo/UserHooks';
 
 interface Props {
   status: Status;
@@ -12,9 +11,9 @@ interface Props {
 
 const StatusItem = (props: Props) => {
   const navigate = useNavigate();
-  const { setDisplayedUser } = useContext(UserInfoActionsContext);
+  const { setDisplayedUser } = useUserInfoActions();
   const { displayErrorMessage } = useMessageActions();
-  const { displayedUser, authToken } = useContext(UserInfoContext);
+  const { displayedUser, authToken } = useUserInfo();
   const getUser = async (authToken: AuthToken, alias: string): Promise<User | null> => {
     // TODO: Replace with the result of calling server
     return FakeData.instance.findUserByAlias(alias);
