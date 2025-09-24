@@ -1,9 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { ToastType } from '../toaster/Toast';
-import { useContext } from 'react';
-import { ToastActionsContext } from '../toaster/ToastContexts';
 import { IconName, IconProp } from '@fortawesome/fontawesome-svg-core';
+import { useMessageActions } from '../toaster/MessageHooks';
 
 interface Props {
   oAuthProvider: string;
@@ -12,9 +10,9 @@ interface Props {
 }
 
 const OAuth = (props: Props) => {
-  const { displayToast } = useContext(ToastActionsContext);
+  const { displayInfoMessage } = useMessageActions();
   const displayInfoMessageWithDarkBackground = (message: string): void => {
-    displayToast(ToastType.Info, message, 3000, undefined, 'text-white bg-primary');
+    displayInfoMessage(message, 3000, 'text-white bg-primary');
   };
   return (
     <button
