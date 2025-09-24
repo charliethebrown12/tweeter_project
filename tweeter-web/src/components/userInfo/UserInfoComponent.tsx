@@ -41,8 +41,7 @@ const UserInfo = () => {
         setIsFollower(await getIsFollowerStatus(authToken!, currentUser!, displayedUser!));
       }
     } catch (error) {
-      displayErrorMessage(
-        `Failed to determine follower status because of exception: ${error}`);
+      displayErrorMessage(`Failed to determine follower status because of exception: ${error}`);
     }
   };
 
@@ -59,8 +58,7 @@ const UserInfo = () => {
     try {
       setFolloweeCount(await getFolloweeCount(authToken, displayedUser));
     } catch (error) {
-      displayErrorMessage(
-        `Failed to get followees count because of exception: ${error}`);
+      displayErrorMessage(`Failed to get followees count because of exception: ${error}`);
     }
   };
 
@@ -73,8 +71,7 @@ const UserInfo = () => {
     try {
       setFollowerCount(await getFollowerCount(authToken, displayedUser));
     } catch (error) {
-      displayErrorMessage(
-        `Failed to get followers count because of exception: ${error}`);
+      displayErrorMessage(`Failed to get followers count because of exception: ${error}`);
     }
   };
 

@@ -68,9 +68,7 @@ const UserItemScroller = (props: Props) => {
       setLastItem(() => newItems[newItems.length - 1]);
       addItems(newItems);
     } catch (error) {
-      displayErrorMessage(
-        `Failed to load ${props.type} because of exception: ${error}`
-      );
+      displayErrorMessage(`Failed to load ${props.type} because of exception: ${error}`);
     }
   };
 
