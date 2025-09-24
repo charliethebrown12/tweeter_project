@@ -10,7 +10,8 @@ import FeedScroller from './components/mainLayout/FeedScroller';
 import StoryScroller from './components/mainLayout/StoryScroller';
 import UserItem from './components/userItem/UserItem';
 import UserItemScroller from './components/mainLayout/UserItemScroller';
-import { AuthToken, User, FakeData } from 'tweeter-shared';
+import { AuthToken, User, FakeData, Status } from 'tweeter-shared';
+import StatusItemScroller from './components/mainLayout/StatusItemScroller';
 
 const App = () => {
   const { currentUser, authToken } = useContext(UserInfoContext);
@@ -52,12 +53,52 @@ const AuthenticatedRoutes = () => {
     return FakeData.instance.getPageOfUsers(lastFollower, pageSize, userAlias);
   };
 
+  const loadMoreFeedItems = async (
+    authToken: AuthToken,
+    userAlias: string,
+    pageSize: number,
+    lastItem: Status | null,
+  ): Promise<[Status[], boolean]> => {
+    // TODO: Replace with the result of calling server
+    return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
+  };
+
+  const loadMoreStoryItems = async (
+    authToken: AuthToken,
+    userAlias: string,
+    pageSize: number,
+    lastItem: Status | null,
+  ): Promise<[Status[], boolean]> => {
+    // TODO: Replace with the result of calling server
+    return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
+  };
+
   return (
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Navigate to={`/feed/${displayedUser!.alias}`} />} />
-        <Route path="feed/:displayedUser" element={<FeedScroller />} />
-        <Route path="story/:displayedUser" element={<StoryScroller />} />
+        <Route
+          path="feed/:displayedUser"
+          element={
+            <StatusItemScroller
+              key={`feed-${displayedUser!.alias}`}
+              featurePath="/feed"
+              type="feed"
+              loadMoreFunction={loadMoreFeedItems}
+            />
+          }
+        />
+        <Route
+          path="story/:displayedUser"
+          element={
+            <StatusItemScroller
+              key={`story-${displayedUser!.alias}`}
+              featurePath="/story"
+              type="story"
+              loadMoreFunction={loadMoreStoryItems}
+            />
+          }
+        />
         <Route
           path="followees/:displayedUser"
           element={
