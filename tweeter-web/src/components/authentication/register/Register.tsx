@@ -119,22 +119,38 @@ const Register = () => {
   const inputFieldFactory = () => {
     return (
       <>
-            <AuthenticationFields id="firstNameInput" label="First Name" placeholder="First Name" type="text"
-        onKeyDown={registerOnEnter}
-        onChange={(event) => setFirstName(event.target.value)}
-      />
-            <AuthenticationFields id="lastNameInput" label="Last Name" placeholder="Last Name" type="text"
-        onKeyDown={registerOnEnter}
-        onChange={(event) => setLastName(event.target.value)}
-      />
-            <AuthenticationFields id="aliasInput" label="Alias" placeholder="name@example.com" type="text"
-        onKeyDown={registerOnEnter}
-        onChange={(event) => setAlias(event.target.value)}
-      />
-            <AuthenticationFields id="passwordInput" label="Password" placeholder="Password" type="password"
-        onKeyDown={registerOnEnter}
-        onChange={(event) => setPassword(event.target.value)}
-      />
+        <AuthenticationFields
+          id="firstNameInput"
+          label="First Name"
+          placeholder="First Name"
+          type="text"
+          onKeyDown={registerOnEnter}
+          onChange={(event) => setFirstName(event.target.value)}
+        />
+        <AuthenticationFields
+          id="lastNameInput"
+          label="Last Name"
+          placeholder="Last Name"
+          type="text"
+          onKeyDown={registerOnEnter}
+          onChange={(event) => setLastName(event.target.value)}
+        />
+        <AuthenticationFields
+          id="aliasInput"
+          label="Alias"
+          placeholder="name@example.com"
+          type="text"
+          onKeyDown={registerOnEnter}
+          onChange={(event) => setAlias(event.target.value)}
+        />
+        <AuthenticationFields
+          id="passwordInput"
+          label="Password"
+          placeholder="Password"
+          type="password"
+          onKeyDown={registerOnEnter}
+          onChange={(event) => setPassword(event.target.value)}
+        />
         <div className="form-floating mb-3">
           <input
             type="file"

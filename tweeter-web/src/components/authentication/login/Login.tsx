@@ -68,15 +68,22 @@ const Login = (props: Props) => {
   const inputFieldFactory = () => {
     return (
       <>
-      <AuthenticationFields id="aliasInput" label="Alias" placeholder="name@example.com" type="text"
-        onKeyDown={loginOnEnter}
-        onChange={(event) => setAlias(event.target.value)}
-      />
-      <AuthenticationFields id="passwordInput" label="Password" placeholder="Password"
-        type="password"
-        onKeyDown={loginOnEnter}
-        onChange={(event) => setPassword(event.target.value)}
-      />
+        <AuthenticationFields
+          id="aliasInput"
+          label="Alias"
+          placeholder="name@example.com"
+          type="text"
+          onKeyDown={loginOnEnter}
+          onChange={(event) => setAlias(event.target.value)}
+        />
+        <AuthenticationFields
+          id="passwordInput"
+          label="Password"
+          placeholder="Password"
+          type="password"
+          onKeyDown={loginOnEnter}
+          onChange={(event) => setPassword(event.target.value)}
+        />
       </>
     );
   };
