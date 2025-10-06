@@ -1,0 +1,23 @@
+{
+  // Use Prettier as the default formatter and format files on save
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+
+  // Optionally ensure only the default formatter runs on save
+  "editor.formatOnSaveMode": "modifications",
+
+  // If you prefer to restrict format-on-save to certain languages, you can
+  // use the following language-specific overrides (example for TypeScript/TSX/JS/JSX):
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
