@@ -1,22 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useParams } from 'react-router-dom';
-import { User, AuthToken} from 'tweeter-shared';
+import { User } from 'tweeter-shared';
 import UserItem from '../userItem/UserItem';
 import { useMessageActions } from '../toaster/MessageHooks';
 import { useUserInfo, useUserInfoActions } from '../userInfo/UserHooks';
-import { FolloweePresenter } from 'src/presenter/FolloweePresenter';
-import UserItemPresenter, { UserItemView } from 'src/presenter/UserItemPresenter';
+import { UserItemPresenter, UserItemView } from 'src/presenter/UserItemPresenter';
 
 interface Props {
   featurePath: string; // e.g., "/followers" or "/followees"
-  type: 'followers' | 'followees';
-  loadMoreFunction: (
-    authToken: AuthToken,
-    userAlias: string,
-    pageSize: number,
-    lastUser: User | null,
-  ) => Promise<[User[], boolean]>;
   presenterFactory: (listener: UserItemView) => UserItemPresenter;
 }
 
@@ -29,16 +21,19 @@ const UserItemScroller = (props: Props) => {
   const { displayedUser: displayedUserAliasParam } = useParams();
 
   const listener: UserItemView = {
-      addItems: (items: User[]) => setItems((previousItems) => [...previousItems, ...items]),
-      displayErrorMessage: displayErrorMessage
-  }
+    addItems: (items: User[]) => setItems((previousItems) => [...previousItems, ...items]),
+    displayErrorMessage: displayErrorMessage,
+  };
 
-  const presenter = props.presenterFactory(listener);
+  const presenterRef = useRef<UserItemPresenter | null>(null);
+  if (!presenterRef.current) {
+    presenterRef.current = props.presenterFactory(listener);
+  }
 
   // Update the displayed user context variable whenever the displayedUser url parameter changes. This allows browser forward and back buttons to work correctly.
   useEffect(() => {
     if (authToken && displayedUserAliasParam && displayedUserAliasParam != displayedUser!.alias) {
-      getUser(authToken!, displayedUserAliasParam!).then((toUser) => {
+      presenterRef.current!.getUser(authToken!, displayedUserAliasParam!).then((toUser) => {
         if (toUser) {
           setDisplayedUser(toUser);
         }
@@ -49,29 +44,25 @@ const UserItemScroller = (props: Props) => {
   // Initialize the component whenever the displayed user changes
   useEffect(() => {
     reset();
-    loadMoreItems(null);
+    loadMoreItems();
   }, [displayedUser]);
 
   const reset = async () => {
     setItems(() => []);
-    presenter.reset();
+    presenterRef.current!.reset();
   };
 
-  const loadMoreItems = async (lastItem: User | null) => {
-    presenter.loadMoreItems(authToken!, displayedUser!.alias);
+  const loadMoreItems = async () => {
+    presenterRef.current!.loadMoreItems(authToken!, displayedUser!.alias);
   };
-
-  const getUser = async (authToken: AuthToken, alias: string): Promise<User | null> => {
-    return presenter.getUser(authToken, alias);
-  }
 
   return (
     <div className="container px-0 overflow-visible vh-100">
       <InfiniteScroll
         className="pr-0 mr-0"
         dataLength={items.length}
-        next={() => loadMoreItems(lastItem)}
-        hasMore={hasMoreItems}
+        next={loadMoreItems}
+        hasMore={presenterRef.current!.hasMoreItems}
         loader={<h4>Loading...</h4>}
       >
         {items.map((item, index) => (

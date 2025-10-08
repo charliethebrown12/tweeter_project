@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { AuthToken, FakeData, User } from 'tweeter-shared';
+import { AuthToken, User } from 'tweeter-shared';
 import { useMessageActions } from '../components/toaster/MessageHooks';
 import { useUserInfo, useUserInfoActions } from '../components/userInfo/UserHooks';
+import { UserService } from '../model.service/UserService';
 
 type PathOrFactory = string | ((alias: string) => string) | undefined;
 
@@ -20,9 +21,10 @@ export function useUserNavigation(): UserNavigation {
     return value.substring(index);
   };
 
+  const userService = new UserService();
+
   const getUser = async (authToken: AuthToken, alias: string): Promise<User | null> => {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.findUserByAlias(alias);
+    return userService.getUser(authToken, alias);
   };
 
   const navigateToUser = async (

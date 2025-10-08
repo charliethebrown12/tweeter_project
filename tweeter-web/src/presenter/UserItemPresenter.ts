@@ -1,45 +1,51 @@
-import { User } from "tweeter-shared/src/model/domain/User";
+import { UserService } from 'src/model.service/UserService';
+import { AuthToken } from 'tweeter-shared';
+import { User } from 'tweeter-shared/src/model/domain/User';
 
 export interface UserItemView {
-    addItems(items: User[]): void;
-    displayErrorMessage(message: string): void;
+  addItems(items: User[]): void;
+  displayErrorMessage(message: string): void;
 }
 
 export abstract class UserItemPresenter {
-    private _view: UserItemView;
-    private _hasMoreItems = true;
-    private _lastItem: User | null = null;
+  private _view: UserItemView;
+  private _hasMoreItems = true;
+  private _lastItem: User | null = null;
+  private userService: UserService;
 
-    protected constructor (view: UserItemView) {
-        this._view = view;
-    }
+  protected constructor(view: UserItemView) {
+    this._view = view;
+    this.userService = new UserService();
+  }
 
-    protected get view() {
-      return this._view;
-    }
+  protected get view() {
+    return this._view;
+  }
 
-    protected get hasMoreItems() {
-      return this._hasMoreItems;
-    }
+  public get hasMoreItems() {
+    return this._hasMoreItems;
+  }
 
-    protected get lastItem() {
-      return this._lastItem;
-    }
+  public get lastItem() {
+    return this._lastItem;
+  }
 
-    protected set hasMoreItems(value: boolean) {
-      this._hasMoreItems = value;
-    }
-    
-    protected set lastItem(value: User | null) {
-      this._lastItem = value;
-    }
+  protected set hasMoreItems(value: boolean) {
+    this._hasMoreItems = value;
+  }
 
-    reset() {
-      this._lastItem = null;
-      this._hasMoreItems = true;
-    }
+  protected set lastItem(value: User | null) {
+    this._lastItem = value;
+  }
 
-    public abstract loadMoreItems(authToken: string, userAlias: string): void;
+  reset() {
+    this._lastItem = null;
+    this._hasMoreItems = true;
+  }
 
+  public abstract loadMoreItems(authToken: AuthToken, userAlias: string): void;
 
+  public async getUser(authToken: AuthToken, alias: string): Promise<User | null> {
+    return this.userService.getUser(authToken, alias);
+  }
 }

@@ -9,7 +9,8 @@ interface Props {
 }
 
 const Post = (props: Props) => {
-  const { displayedUser, authToken } = useUserInfo();
+  // displayedUser and authToken not needed in this component; navigation handled by hook
+  useUserInfo();
 
   const { navigateToUser } = useUserNavigation();
 
