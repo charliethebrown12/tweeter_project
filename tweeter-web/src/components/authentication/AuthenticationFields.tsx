@@ -5,6 +5,7 @@ interface Props {
   type: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (event: React.KeyboardEvent<HTMLElement>) => void;
+  value?: string;
 }
 
 const AuthenticationFields = (props: Props) => {
@@ -18,6 +19,7 @@ const AuthenticationFields = (props: Props) => {
         placeholder={props.placeholder}
         onKeyDown={props.onKeyDown}
         onChange={props.onChange}
+        value={props.value}
       />
       <label htmlFor={props.id}>{props.label}</label>
     </div>

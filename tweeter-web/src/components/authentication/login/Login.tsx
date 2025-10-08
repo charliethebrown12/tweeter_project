@@ -11,12 +11,12 @@ import { AuthPresenter, AuthView } from 'src/presenter/AuthPresenter';
 
 interface Props {
   originalUrl?: string;
+  presenterFactory?: (listener: AuthView) => AuthPresenter;
 }
 
 const Login = (props: Props) => {
   const [alias, setAlias] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -39,7 +39,9 @@ const Login = (props: Props) => {
 
   const presenterRef = useRef<AuthPresenter | null>(null);
   if (!presenterRef.current) {
-    presenterRef.current = new AuthPresenter(viewRef.current);
+    presenterRef.current = props.presenterFactory
+      ? props.presenterFactory(viewRef.current)
+      : new AuthPresenter(viewRef.current);
   }
 
   const checkSubmitButtonStatus = (): boolean => {
@@ -55,7 +57,7 @@ const Login = (props: Props) => {
   const doLogin = async () => {
     try {
       setIsLoading(true);
-      await presenterRef.current!.login(alias, password, rememberMe, props.originalUrl);
+      await presenterRef.current!.login(props.originalUrl);
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +103,7 @@ const Login = (props: Props) => {
       oAuthHeading="Sign in with:"
       inputFieldFactory={inputFieldFactory}
       switchAuthenticationMethodFactory={switchAuthenticationMethodFactory}
-      setRememberMe={setRememberMe}
+  setRememberMe={(val: boolean) => presenterRef.current!.setRememberMe(val)}
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}
       submit={doLogin}

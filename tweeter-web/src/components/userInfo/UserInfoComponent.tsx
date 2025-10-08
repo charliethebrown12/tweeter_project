@@ -27,6 +27,9 @@ const UserInfo = () => {
     setFolloweeCount: setFolloweeCount,
     setFollowerCount: setFollowerCount,
     displayErrorMessage: displayErrorMessage,
+    setIsLoading: setIsLoading,
+    displayInfoMessage: displayInfoMessage,
+    deleteMessage: deleteMessage,
   });
 
   const presenterRef = useRef<UserInfoPresenter | null>(null);
@@ -51,38 +54,12 @@ const UserInfo = () => {
 
   const followDisplayedUser = async (event: React.MouseEvent): Promise<void> => {
     event.preventDefault();
-
-    var followingUserToast = '';
-
-    try {
-      setIsLoading(true);
-      followingUserToast = displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
-
-      await presenterRef.current!.follow(authToken!, displayedUser!);
-    } catch (error) {
-      // presenter already reports errors to view; keep behavior consistent
-    } finally {
-      deleteMessage(followingUserToast);
-      setIsLoading(false);
-    }
+    await presenterRef.current!.follow(authToken!, displayedUser!);
   };
 
   const unfollowDisplayedUser = async (event: React.MouseEvent): Promise<void> => {
     event.preventDefault();
-
-    var unfollowingUserToast = '';
-
-    try {
-      setIsLoading(true);
-      unfollowingUserToast = displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);
-
-      await presenterRef.current!.unfollow(authToken!, displayedUser!);
-    } catch (error) {
-      // presenter already reports errors to view; keep behavior consistent
-    } finally {
-      deleteMessage(unfollowingUserToast);
-      setIsLoading(false);
-    }
+    await presenterRef.current!.unfollow(authToken!, displayedUser!);
   };
 
   return (

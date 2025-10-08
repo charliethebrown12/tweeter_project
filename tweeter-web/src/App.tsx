@@ -12,6 +12,7 @@ import { UserItemView } from './presenter/UserItemPresenter';
 import { FollowerPresenter } from './presenter/FollowerPresenter';
 import { FeedPresenter } from './presenter/FeedPresenter';
 import { StoryPresenter } from './presenter/StoryPresenter';
+import { AuthPresenter } from './presenter/AuthPresenter';
 
 const App = () => {
   const { currentUser, authToken } = useUserInfo();
@@ -92,7 +93,10 @@ const UnauthenticatedRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route
+        path="/register"
+        element={<Register presenterFactory={(listener) => new AuthPresenter(listener)} />}
+      />
       <Route path="*" element={<Login originalUrl={location.pathname} />} />
     </Routes>
   );
