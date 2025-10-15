@@ -31,7 +31,7 @@ const StatusItem = (props: Props) => {
               -{' '}
               <Link
                 to={`/story/${props.status.user.alias}`}
-                onClick={(e) => navigateToUser(e, (alias) => `/story/${alias}`)}
+                onClick={(e) => navigateToUser(e, props.status.user, (alias) => `/story/${alias}`)}
               >
                 {props.status.user.alias}
               </Link>

@@ -1,5 +1,6 @@
 import { AuthToken, User } from 'tweeter-shared';
-import { AuthService } from 'src/model.service/AuthService';
+import { UserService } from 'src/model.service/UserService';
+import { Presenter, View } from './Presenter';
 
 export interface AuthState {
   alias: string;
@@ -15,20 +16,18 @@ export interface AuthState {
   imageFileExtension: string;
 }
 
-export interface AuthView {
+export interface AuthView extends View {
   onAuthSuccess: (user: User, authToken: AuthToken, remember: boolean, redirect?: string) => void;
-  displayErrorMessage: (message: string) => void;
   onStateChanged?: (state: AuthState) => void;
 }
 
-export class AuthPresenter {
-  private view: AuthView;
-  private service: AuthService;
-  private state: AuthState;
+export class AuthPresenter extends Presenter<AuthView> {
+  protected service: UserService;
+  protected state: AuthState;
 
   constructor(view: AuthView) {
-    this.view = view;
-    this.service = new AuthService();
+    super(view);
+    this.service = new UserService();
     this.state = {
       alias: '',
       password: '',
@@ -93,40 +92,17 @@ export class AuthPresenter {
     this.publishState();
   }
 
-  public async login(originalUrl?: string) {
-    const { alias, password, rememberMe } = this.state;
-    try {
+  protected async authenticate(
+    authOperation: () => Promise<[User, AuthToken]>,
+    operationDescription: string,
+    originalUrl?: string
+  ) {
+    this.doFailureReportingOperation(async () => {
       this.setIsLoading(true);
-      const [user, authToken] = await this.service.login(alias, password);
-      this.view.onAuthSuccess(user, authToken, rememberMe, originalUrl);
-    } catch (error) {
-      this.view.displayErrorMessage(`Failed to log user in because of exception: ${error}`);
-      throw error;
-    } finally {
+      const [user, authToken] = await authOperation();
+      this.view.onAuthSuccess(user, authToken, this.state.rememberMe, originalUrl);
       this.setIsLoading(false);
-    }
-  }
-
-  public async register() {
-    const { firstName, lastName, alias, password, imageBytes, imageFileExtension, rememberMe } =
-      this.state;
-    try {
-      this.setIsLoading(true);
-      const [user, authToken] = await this.service.register(
-        firstName,
-        lastName,
-        alias,
-        password,
-        imageBytes,
-        imageFileExtension,
-      );
-      this.view.onAuthSuccess(user, authToken, rememberMe, `/feed/${user.alias}`);
-    } catch (error) {
-      this.view.displayErrorMessage(`Failed to register user because of exception: ${error}`);
-      throw error;
-    } finally {
-      this.setIsLoading(false);
-    }
+    }, operationDescription);
   }
 
   public handleImageFile(file: File | undefined) {

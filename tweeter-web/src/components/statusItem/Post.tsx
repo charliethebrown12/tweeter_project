@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Status, Type } from 'tweeter-shared';
 import { useUserInfo } from '../userInfo/UserHooks';
-import { useUserNavigation } from 'src/hooks/useUserNavigation';
 
 interface Props {
   status: Status;
@@ -9,10 +8,8 @@ interface Props {
 }
 
 const Post = (props: Props) => {
-  // displayedUser and authToken not needed in this component; navigation handled by hook
+  // displayedUser and authToken not needed in this component
   useUserInfo();
-
-  const { navigateToUser } = useUserNavigation();
 
   return (
     <>
@@ -21,7 +18,6 @@ const Post = (props: Props) => {
           <Link
             key={index}
             to={`${props.featurePath}/${segment.text}`}
-            onClick={(e) => navigateToUser(e, props.featurePath)}
           >
             {segment.text}
           </Link>
