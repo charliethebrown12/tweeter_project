@@ -1,34 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useParams } from 'react-router-dom';
-import { Status } from 'tweeter-shared';
-import StatusItem from '../statusItem/StatusItem';
 import { useMessageActions } from '../toaster/MessageHooks';
 import { useUserInfo, useUserInfoActions } from '../userInfo/UserHooks';
-import { StatusItemPresenter, StatusItemView } from 'src/presenter/StatusItemPresenter';
+import { PageItemPresenter, PageItemView } from 'src/presenter/PageItemPresenter';
 
-const PAGE_SIZE = 10;
-
-interface Props {
+interface Props<T> {
   featurePath: string;
-  type: 'feed' | 'story';
-  presenterFactory: (listener: StatusItemView) => StatusItemPresenter;
+  presenterFactory: (listener: PageItemView<T>) => PageItemPresenter<T, any>;
+  itemRenderer: (item: T, index: number, featurePath: string) => JSX.Element;
 }
 
-const StatusItemScroller = (props: Props) => {
+const ItemScroller = <T,>(props: Props<T>) => {
   const { displayErrorMessage } = useMessageActions();
-  const [items, setItems] = useState<Status[]>([]);
+  const [items, setItems] = useState<T[]>([]);
 
   const { displayedUser, authToken } = useUserInfo();
   const { setDisplayedUser } = useUserInfoActions();
   const { displayedUser: displayedUserAliasParam } = useParams();
 
-  const listener: StatusItemView = {
-    addItems: (items: Status[]) => setItems((previousItems) => [...previousItems, ...items]),
+  const listener: PageItemView<T> = {
+    addItems: (items: T[]) => setItems((previousItems) => [...previousItems, ...items]),
     displayErrorMessage: displayErrorMessage,
   };
 
-  const presenterRef = useRef<StatusItemPresenter | null>(null);
+  const presenterRef = useRef<PageItemPresenter<T, any> | null>(null);
   if (!presenterRef.current) {
     presenterRef.current = props.presenterFactory(listener);
   }
@@ -56,7 +52,7 @@ const StatusItemScroller = (props: Props) => {
   };
 
   const loadMoreItems = async () => {
-    presenterRef.current!.loadMoreItems(authToken!, displayedUser!.alias, PAGE_SIZE);
+    presenterRef.current!.loadMoreItems(authToken!, displayedUser!.alias);
   };
 
   return (
@@ -68,14 +64,10 @@ const StatusItemScroller = (props: Props) => {
         hasMore={presenterRef.current!.hasMoreItems}
         loader={<h4>Loading...</h4>}
       >
-        {items.map((item, index) => (
-          <div key={index} className="row mb-3 mx-0 px-0 border rounded bg-white">
-            <StatusItem status={item} featurePath={props.featurePath} />
-          </div>
-        ))}
+        {items.map((item, index) => props.itemRenderer(item, index, props.featurePath))}
       </InfiniteScroll>
     </div>
   );
 };
 
-export default StatusItemScroller;
+export default ItemScroller;

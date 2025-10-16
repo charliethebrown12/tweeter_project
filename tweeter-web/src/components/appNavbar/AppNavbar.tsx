@@ -5,7 +5,7 @@ import Image from 'react-bootstrap/Image';
 // AuthToken not needed in this component
 import { useMessageActions } from '../toaster/MessageHooks';
 import { useUserInfo, useUserInfoActions } from '../userInfo/UserHooks';
-import { SessionPresenter, SessionView } from 'src/presenter/SessionPresenter';
+import { NavbarPresenter, NavbarView } from 'src/presenter/NavbarPresenter';
 import { useRef } from 'react';
 
 const AppNavbar = () => {
@@ -15,7 +15,7 @@ const AppNavbar = () => {
   const navigate = useNavigate();
   const { displayErrorMessage, displayInfoMessage, deleteMessage } = useMessageActions();
 
-  const viewRef = useRef<SessionView>({
+  const viewRef = useRef<NavbarView>({
     displayInfoMessage: (message: string, duration: number, bootstrapClasses?: string) =>
       displayInfoMessage(message, duration, bootstrapClasses),
     deleteMessage: (messageId: string) => deleteMessage(messageId),
@@ -27,15 +27,13 @@ const AppNavbar = () => {
     },
   });
 
-  const presenterRef = useRef<SessionPresenter | null>(null);
-  if (!presenterRef.current) presenterRef.current = new SessionPresenter(viewRef.current);
+  const presenterRef = useRef<NavbarPresenter | null>(null);
+  if (!presenterRef.current) presenterRef.current = new NavbarPresenter(viewRef.current);
 
   const logOut = async () => {
     try {
       await presenterRef.current!.logout(authToken!);
-    } catch (error) {
-      // presenter handles error display
-    }
+    } catch (error) {}
   };
 
   return (

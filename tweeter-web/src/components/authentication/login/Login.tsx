@@ -7,11 +7,12 @@ import { AuthToken, User } from 'tweeter-shared';
 import AuthenticationFields from '../AuthenticationFields';
 import { useMessageActions } from 'src/components/toaster/MessageHooks';
 import { useUserInfoActions } from 'src/components/userInfo/UserHooks';
-import { AuthPresenter, AuthView } from 'src/presenter/AuthPresenter';
+import { AuthView } from 'src/presenter/AuthPresenter';
+import { LoginPresenter } from 'src/presenter/LoginPresenter';
 
 interface Props {
   originalUrl?: string;
-  presenterFactory?: (listener: AuthView) => AuthPresenter;
+  presenterFactory?: (listener: AuthView) => LoginPresenter;
 }
 
 const Login = (props: Props) => {
@@ -37,11 +38,11 @@ const Login = (props: Props) => {
     displayErrorMessage: displayErrorMessage,
   });
 
-  const presenterRef = useRef<AuthPresenter | null>(null);
+  const presenterRef = useRef<LoginPresenter | null>(null);
   if (!presenterRef.current) {
     presenterRef.current = props.presenterFactory
       ? props.presenterFactory(viewRef.current)
-      : new AuthPresenter(viewRef.current);
+      : new LoginPresenter(viewRef.current);
   }
 
   const checkSubmitButtonStatus = (): boolean => {
@@ -103,7 +104,7 @@ const Login = (props: Props) => {
       oAuthHeading="Sign in with:"
       inputFieldFactory={inputFieldFactory}
       switchAuthenticationMethodFactory={switchAuthenticationMethodFactory}
-  setRememberMe={(val: boolean) => presenterRef.current!.setRememberMe(val)}
+      setRememberMe={(val: boolean) => presenterRef.current!.setRememberMe(val)}
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}
       submit={doLogin}

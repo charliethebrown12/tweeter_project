@@ -7,10 +7,11 @@ import { AuthToken, User } from 'tweeter-shared';
 import AuthenticationFields from '../AuthenticationFields';
 import { useMessageActions } from 'src/components/toaster/MessageHooks';
 import { useUserInfoActions } from 'src/components/userInfo/UserHooks';
-import { AuthPresenter, AuthView } from 'src/presenter/AuthPresenter';
+import { AuthView } from 'src/presenter/AuthPresenter';
+import { RegisterPresenter } from 'src/presenter/RegisterPresenter';
 
 interface Props {
-  presenterFactory: (listener: AuthView) => AuthPresenter;
+  presenterFactory: (listener: AuthView) => RegisterPresenter;
 }
 
 const Register = (props: Props) => {
@@ -40,11 +41,11 @@ const Register = (props: Props) => {
     onStateChanged: (state) => setViewState(state),
   });
 
-  const presenterRef = useRef<AuthPresenter | null>(null);
+  const presenterRef = useRef<RegisterPresenter | null>(null);
   if (!presenterRef.current) {
     presenterRef.current = props.presenterFactory
       ? props.presenterFactory(viewRef.current)
-      : new AuthPresenter(viewRef.current);
+      : new RegisterPresenter(viewRef.current);
   }
 
   const checkSubmitButtonStatus = (): boolean => {
