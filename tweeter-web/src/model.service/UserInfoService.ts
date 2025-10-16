@@ -23,7 +23,7 @@ export class UserInfoService {
   public async follow(_authToken: AuthToken, userToFollow: User): Promise<[number, number]> {
     // TODO: Call server to follow user. For now simulate and return refreshed counts.
     // Simulate small delay to mimic network
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 500));
     const followerCount = await this.getFollowerCount(_authToken, userToFollow);
     const followeeCount = await this.getFolloweeCount(_authToken, userToFollow);
     return [followerCount, followeeCount];
@@ -31,7 +31,7 @@ export class UserInfoService {
 
   public async unfollow(_authToken: AuthToken, userToUnfollow: User): Promise<[number, number]> {
     // TODO: Call server to unfollow user. For now simulate and return refreshed counts.
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 500));
     const followerCount = await this.getFollowerCount(_authToken, userToUnfollow);
     const followeeCount = await this.getFolloweeCount(_authToken, userToUnfollow);
     return [followerCount, followeeCount];
