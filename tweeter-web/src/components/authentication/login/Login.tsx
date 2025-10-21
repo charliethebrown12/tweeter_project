@@ -13,6 +13,7 @@ import { LoginPresenter } from 'src/presenter/LoginPresenter';
 interface Props {
   originalUrl?: string;
   presenterFactory?: (listener: AuthView) => LoginPresenter;
+  presenter?: LoginPresenter;
 }
 
 const Login = (props: Props) => {
@@ -40,9 +41,13 @@ const Login = (props: Props) => {
 
   const presenterRef = useRef<LoginPresenter | null>(null);
   if (!presenterRef.current) {
-    presenterRef.current = props.presenterFactory
-      ? props.presenterFactory(viewRef.current)
-      : new LoginPresenter(viewRef.current);
+    if (!!props.presenter) {
+      presenterRef.current = props.presenter;
+    } else if (props.presenterFactory) {
+      presenterRef.current = props.presenterFactory(viewRef.current);
+    } else {
+      presenterRef.current = new LoginPresenter(viewRef.current);
+    }
   }
 
   const checkSubmitButtonStatus = (): boolean => {
