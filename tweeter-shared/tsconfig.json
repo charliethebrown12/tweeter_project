@@ -18,5 +18,9 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "../tweeter-web/src/net/ClientCommunicator.ts",
+    "../tweeter-web/src/net/ServerFacade.ts"
+  ]
 }

@@ -1,0 +1,21 @@
+{
+  "name": "tweeter-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run compile",
+    "compile": "npm run clean && tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.928.0",
+    "date-fns": "^3.3.1",
+    "tweeter-shared": "file:../tweeter-shared",
+    "typescript": "^5.9.3",
+    "uuid": "^9.0.1"
+  }
+}
