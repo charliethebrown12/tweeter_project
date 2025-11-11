@@ -31,10 +31,81 @@ Metadata:
 
   x-common-cors-headers: &commonCorsHeaders
     method.response.header.Access-Control-Allow-Origin: "'*'"
+    # This is correct. It allows the browser to send these headers.
+    method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    # This is correct. It tells the browser which methods are allowed.
+    method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
 
   x-common-swagger-response-headers: &commonSwaggerResponseHeaders
     Access-Control-Allow-Origin:
       type: string
+    # This is correct.
+    Access-Control-Allow-Headers:
+      type: string
+    Access-Control-Allow-Methods:
+      type: string
+
+  # +++ MOVED ALL REUSABLE ANCHORS HERE +++
+  # These are now defined *before* they are used.
+  x-common-consumes: &commonConsumes
+    - application/json
+  x-common-produces: &commonProduces
+    - application/json
+  x-common-request-templates: &commonRequestTemplates
+    application/json: $input.json('$')
+  x-common-amazon-responses: &commonAmazonResponses
+    default:
+      statusCode: 200
+      responseParameters: *commonCorsHeaders
+    ".*bad-request.*":
+      statusCode: 400
+      responseParameters: *commonCorsHeaders
+      responseTemplates:
+        application/json: '{ "error": "$input.path(''$.errorMessage'')" }'
+    ".*unauthorized.*":
+      statusCode: 401
+      responseParameters: *commonCorsHeaders
+      responseTemplates:
+        application/json: '{ "error": "$input.path(''$.errorMessage'')" }'
+    ".*internal-server-error.*":
+      statusCode: 500
+      responseParameters: *commonCorsHeaders
+      responseTemplates:
+        application/json: '{ "error": "$input.path(''$.errorMessage'')" }'
+  x-common-swagger-responses: &commonSwaggerResponses
+    "200":
+      description: "OK"
+      headers: *commonSwaggerResponseHeaders
+    "400":
+      description: "Bad Request"
+      headers: *commonSwaggerResponseHeaders
+    "401":
+      description: "Unauthorized"
+      headers: *commonSwaggerResponseHeaders
+    "500":
+      description: "Internal Server Error"
+      headers: *commonSwaggerResponseHeaders
+  # +++++++++++++++++++++++++++++++++++++++++
+
+  # +++ THIS REUSABLE 'options' BLOCK CAN NOW FIND THE ANCHORS +++
+  x-common-options-integration: &commonOptionsIntegration
+    consumes: *commonConsumes
+    produces: *commonProduces
+    responses:
+      "200":
+        description: "200 response"
+        headers: *commonSwaggerResponseHeaders
+    x-amazon-apigateway-integration:
+      type: mock
+      requestTemplates:
+        application/json: '{ "statusCode": 200 }'
+      responses:
+        default:
+          statusCode: 200
+          responseParameters: *commonCorsHeaders
+          responseTemplates:
+            application/json: "{}"
+  # +++++++++++++++++++++++++++++++++++++++++++++++
 
 
 #
@@ -52,53 +123,26 @@ Resources:
     Properties:
       Name: tweeterApi
       StageName: prod
-      Cors:
-        AllowMethods: "'GET,POST,PUT,DELETE'"
-        AllowHeaders: "'*'"
-        AllowOrigin: "'*'"
+      # --- THIS BLOCK WAS CAUSING THE CONFLICT ---
+      # It is ignored by API Gateway when 'DefinitionBody' is present
+      # and causes deployment errors. I have removed it.
+      # Cors:
+      #   AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+      #   AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      #   AllowOrigin: "'*'"
+      # -------------------------------------------
       DefinitionBody:
         swagger: "2.0"
         info:
           title: "Tweeter API"
           version: "1.0"
-        x-common-consumes: &commonConsumes
-          - application/json
-        x-common-produces: &commonProduces
-          - application/json
-        x-common-request-templates: &commonRequestTemplates
-          application/json: $input.json('$')
-        x-common-amazon-responses: &commonAmazonResponses
-          default:
-            statusCode: 200
-            responseParameters: *commonCorsHeaders
-          ".*bad-request.*":
-            statusCode: 400
-            responseParameters: *commonCorsHeaders
-            responseTemplates:
-              application/json: '{ "error": "$input.path(''$.errorMessage'')" }'
-          ".*unauthorized.*":
-            statusCode: 401
-            responseParameters: *commonCorsHeaders
-            responseTemplates:
-              application/json: '{ "error": "$input.path(''$.errorMessage'')" }'
-          ".*internal-server-error.*":
-            statusCode: 500
-            responseParameters: *commonCorsHeaders
-            responseTemplates:
-              application/json: '{ "error": "$input.path(''$.errorMessage'')" }'
-        x-common-swagger-responses: &commonSwaggerResponses
-          "200":
-            description: "OK"
-            headers: *commonSwaggerResponseHeaders
-          "400":
-            description: "Bad Request"
-            headers: *commonSwaggerResponseHeaders
-          "401":
-            description: "Unauthorized"
-            headers: *commonSwaggerResponseHeaders
-          "500":
-            description: "Internal Server Error"
-            headers: *commonSwaggerResponseHeaders
+        # --- THESE ARE NOW *REFERENCES* TO THE ANCHORS DEFINED ABOVE ---
+        x-common-consumes: *commonConsumes
+        x-common-produces: *commonProduces
+        x-common-request-templates: *commonRequestTemplates
+        x-common-amazon-responses: *commonAmazonResponses
+        x-common-swagger-responses: *commonSwaggerResponses
+        # -------------------------------------------------------------
         paths:
 
           #
@@ -137,7 +181,10 @@ Resources:
             #
             # TODO: ADD MORE ENDPOINT DEFINITIONS HERE
             #
+
+            # +++ THIS IS THE CORRECTED BLOCK +++
             /followee/list:
+              # This 'post' block now *only* defines the 'post' method.
               post:
                 consumes: *commonConsumes
                 produces: *commonProduces
@@ -150,6 +197,12 @@ Resources:
                   requestTemplates: *commonRequestTemplates
                   responses: *commonAmazonResponses
                 responses: *commonSwaggerResponses
+              
+              # +++ THIS IS THE CLEAN, REUSABLE FIX +++
+              # This line now just *references* the common
+              # 'options' block we defined above. No repetition!
+              options: *commonOptionsIntegration
+            # +++++++++++++++++++++++++++++++++++++++
 
 
   #
@@ -190,6 +243,9 @@ Resources:
       ##### TODO: Modify Handler property to match your code. This identifies the exact function that the lambda should run.
       Handler: handlers/users/UserGetHandler.userGetHandler
       Policies: *commonPolicies
+      # This 'Events' block is an alternate way to define endpoints.
+      # It's fine to leave it, but all new endpoints
+      # should be defined in the 'DefinitionBody' (Swagger) section.
       Events:
         PostApi:
           Type: Api
@@ -217,13 +273,19 @@ Resources:
   #
   # TODO: ADD MORE WEB API LAMBDA DEFINITIONS HERE
   #
+
+  # +++ ADD THIS BLOCK FOR YOUR "GET FOLLOWERS" FEATURE +++
   GetFollowersFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: GetFollowersFunction
-      # This points to your new handler file: 'dist/lambda/GetFollowersHandler.js'
+      # This points to your compiled handler file and the exported 'handler' function
+      # 'dist/' is already in the global 'CodeUri', so we start from 'lambda/'
       Handler: lambda/GetFollowersHandler.handler
       Policies: *commonPolicies
+      # NO 'Events:' block is needed here, because you
+      # already defined the API path in the Swagger 'DefinitionBody' above.
+  # +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
   #
@@ -285,28 +347,28 @@ Resources:
   followTable:  ##### TODO: Change to match the table name
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: follow  ##### TODO: Set the actual table name
+      TableName: follows  # <-- M4 PREP: 'follow' to 'follows' (to match your DAO)
       AttributeDefinitions:
         ##### TODO: Add attributes that will be partition or sort keys, including their datatypes (for both table and index)
-        - AttributeName: follower_alias
+        - AttributeName: follower_alias  # <-- This is your consistent 'alias' key
           AttributeType: S
-        - AttributeName: followee_alias
+        - AttributeName: followee_alias  # <-- This is your consistent 'alias' key
           AttributeType: S
       KeySchema:
-        - AttributeName: follower_alias  ##### TODO: Set table partition key
+        - AttributeName: follower_alias  # <-- This is your consistent 'alias' key
           KeyType: HASH
-        - AttributeName: followee_alias  ##### TODO: Set table sort key
+        - AttributeName: followee_alias  # <-- This is your consistent 'alias' key
           KeyType: RANGE
       BillingMode: PROVISIONED
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-        - IndexName: follow_index  ##### TODO: Set the actual index name
+        - IndexName: follows_alias_index  # <-- Renamed to match keys
           KeySchema:
-            - AttributeName: followee_alias  ##### TODO: Set index partition key
+            - AttributeName: followee_alias  # <-- This is your consistent 'alias' key
               KeyType: HASH
-            - AttributeName: follower_alias  ##### TODO: Set index sort key
+            - AttributeName: follower_alias  # <-- This is your consistent 'alias' key
               KeyType: RANGE
           ProvisionedThroughput:
             ReadCapacityUnits: 1
@@ -317,4 +379,9 @@ Resources:
   #
   # TODO: ADD MORE TABLE DEFINITIONS HERE
   #
-  
+
+
+Outputs:
+  TweeterApi:
+    Description: "API Gateway endpoint URL for Tweeter"
+    Value: !Sub "https://://${tweeterApi}.execute-api.${AWS::Region}.amazonaws.com/prod"

@@ -4,27 +4,32 @@ import { User } from "tweeter-shared/src/model/domain/User";
 import { ClientCommunicator } from "./ClientCommunicator";
 
 export class ServerFacade {
-  // IMPORTANT: You will get this URL after you run 'sam deploy'
-  // for your tweeter-server.
-  private SERVER_URL = "TODO: Set this value.";
+  private SERVER_URL: string;
+  private clientCommunicator: ClientCommunicator;
 
-  private clientCommunicator = new ClientCommunicator(this.SERVER_URL);
+  constructor() {
+    // Read the URL from the environment variable
+    // This is the standard way to access .env variables in a React app
+    const apiUrl = import.meta.env.VITE_API_URL;
 
-  /**
-   * Fetches a page of followees from the server.
-   *
-   * @param {PagedUserItemRequest} request - The request object containing user alias, page size, and last item.
-   * @returns {Promise<[User[], boolean]>} A tuple containing the list of users and a boolean indicating if there are more pages.
-   */
-  public async getMoreFollowees(
-    request: PagedUserItemRequest
-  ): Promise<[User[], boolean]> {
-    
+    if (!apiUrl) {
+      // This provides a clear error in the browser console if the .env file is missing
+      console.error('FATAL: VITE_API_URL is not defined in your .env file.');
+      console.error("Please create a .env file in your client's root directory and add:");
+      console.error('VITE_API_URL=https://[your_api_url].amazonaws.com/prod');
+    }
+
+    // Use a fallback to prevent a crash, but it will fail on network calls
+    this.SERVER_URL = apiUrl || 'http://error-url-not-set.com';
+    this.clientCommunicator = new ClientCommunicator(this.SERVER_URL);
+  }
+
+  public async getMoreFollowees(request: PagedUserItemRequest): Promise<[User[], boolean]> {
     // Call the doPost method from ClientCommunicator
     const response = await this.clientCommunicator.doPost<
       PagedUserItemRequest,
       PagedUserItemResponse
-    >(request, "/followee/list"); // This endpoint must match your template.yaml
+    >(request, '/followee/list'); // This endpoint must match your template.yaml
 
     // Convert the UserDto array returned by ClientCommunicator to a "smart" User array
     const items: User[] | null =
@@ -41,7 +46,7 @@ export class ServerFacade {
       }
     } else {
       console.error(response);
-      throw new Error(response.message ?? "An unknown error occurred.");
+      throw new Error(response.message ?? 'An unknown error occurred.');
     }
   }
 
