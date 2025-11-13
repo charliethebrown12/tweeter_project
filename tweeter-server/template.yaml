@@ -122,6 +122,8 @@ Resources:
 
           /user/get:  ##### TODO: Change "/user/get" to the actual endpoint URL
             post:
+              summary: Get user profile by alias
+              description: Returns a user's profile (first name, last name, alias, imageUrl) given their alias.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -157,6 +159,8 @@ Resources:
 
           /user/create:  ##### TODO: Set endpoint URL
             post:
+              summary: Register new user
+              description: Registers a new user account and returns an auth token. For M3 this is simulated.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -193,6 +197,8 @@ Resources:
           #
           /followee/list:
             post:
+              summary: List followees (paged)
+              description: Returns a page of users that the target user follows.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -227,6 +233,8 @@ Resources:
           
           /follower/list:
             post:
+              summary: List followers (paged)
+              description: Returns a page of users that follow the target user.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -260,6 +268,8 @@ Resources:
 
           /follow/isfollower:
             post:
+              summary: Check follower relationship
+              description: Returns whether followerAlias is following followeeAlias.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -293,6 +303,8 @@ Resources:
 
           /follow/follow:
             post:
+              summary: Follow user
+              description: Causes actorAlias to follow targetAlias and returns new counts.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -326,6 +338,8 @@ Resources:
 
           /follow/unfollow:
             post:
+              summary: Unfollow user
+              description: Causes actorAlias to unfollow targetAlias and returns new counts.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -359,6 +373,8 @@ Resources:
 
           /follow/follower/count:
             post:
+              summary: Get follower count
+              description: Returns the number of followers for the target user.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -392,6 +408,8 @@ Resources:
 
           /follow/followee/count:
             post:
+              summary: Get followee count
+              description: Returns the number of followees for the target user.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -426,6 +444,8 @@ Resources:
 
           /user/login:
             post:
+              summary: Sign in user
+              description: Signs in the user with alias/password and returns an auth token. Returns 400 when alias is empty.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -459,6 +479,8 @@ Resources:
 
           /user/logout:
             post:
+              summary: Sign out user
+              description: Signs out the current user (simulated for M3).
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -492,6 +514,8 @@ Resources:
 
           /status/post:
             post:
+              summary: Post a new status
+              description: Posts a new status update to the feed/story (simulated for M3).
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -525,6 +549,8 @@ Resources:
 
           /feed/list:
             post:
+              summary: Get feed items (paged)
+              description: Returns a page of most recent statuses for the user’s feed.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -558,6 +584,8 @@ Resources:
 
           /story/list:
             post:
+              summary: Get story items (paged)
+              description: Returns a page of most recent statuses authored by the user.
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:

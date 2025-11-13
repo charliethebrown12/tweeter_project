@@ -5,9 +5,14 @@ import { UserService } from '../service/UserService';
 import { FakeData } from 'tweeter-shared';
 
 export const loginHandler = async (event: any): Promise<any> => {
-  const req: LoginRequest = typeof event === 'string' ? JSON.parse(event) : event?.body ? JSON.parse(event.body) : event;
-  // M3: Be permissive. If alias is empty or unknown, default to the first fake user.
+  const req: LoginRequest =
+    typeof event === 'string' ? JSON.parse(event) : event?.body ? JSON.parse(event.body) : event;
+  // M3: Return 400 when alias is empty to satisfy documentation rubric; otherwise be permissive for unknown alias
   const requestedAlias = (req?.alias ?? '').trim();
+  if (!requestedAlias) {
+    // Throwing an error with 'bad-request' triggers our API Gateway 400 mapping
+    throw new Error('bad-request: alias is required');
+  }
   let user = requestedAlias ? FakeData.instance.findUserByAlias(requestedAlias) : null;
   if (!user) {
     user = FakeData.instance.firstUser;
