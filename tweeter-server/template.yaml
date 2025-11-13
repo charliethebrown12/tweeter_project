@@ -224,7 +224,370 @@ Resources:
                       method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
                     responseTemplates:
                       application/json: '{}'
+          
+          /follower/list:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FollowersListFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
+
+          /follow/isfollower:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IsFollowerFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
+
+          /follow/follow:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FollowFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
+
+          /follow/unfollow:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UnfollowFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
+
+          /follow/follower/count:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FollowerCountFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
+
+          /follow/followee/count:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FolloweeCountFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
           # +++++++++++++++++++++++++++++++++++++++++++++++
+
+          /user/login:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LoginFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
+
+          /user/logout:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LogoutFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
+
+          /status/post:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostStatusFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
+
+          /feed/list:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FeedListFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
+
+          /story/list:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${StoryListFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+            options:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              responses:
+                "200":
+                  description: "CORS support"
+                  headers: *commonSwaggerResponseHeaders
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+                    responseTemplates:
+                      application/json: '{}'
 
 
   #
@@ -255,38 +618,32 @@ Resources:
   # Web API Lambda functions
   #
 
-  ##### TODO: Change "userGetFunction" to the actual function name.
-  ##### It must match the function name in the "Endpoint definitons" section above.
   userGetFunction:
     Type: AWS::Serverless::Function
     Properties:
-      ##### TODO: Change "userGetFunction" to the actual function name.
       FunctionName: userGetFunction
-      ##### TODO: Modify Handler property to match your code. This identifies the exact function that the lambda should run.
-      Handler: handlers/users/UserGetHandler.userGetHandler
+      Handler: lambda/AuthHandlers.getUserHandler
       Policies: *commonPolicies
       Events:
         PostApi:
           Type: Api
           Properties:
             RestApiId: !Ref tweeterApi
-            ##### TODO: Modify the Path property to the actual endpoint URL.
-            ##### It must match the URL in the "Endpoint definitions" section above.
             Path: /user/get
             Method: POST
 
-  userCreateFunction:  ##### TODO: Set function name
+  userCreateFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: userCreateFunction  ##### TODO: Set function name
-      Handler: handlers/users/UserCreateHandler.userCreateHandler  ##### TODO: Set Handler
+      FunctionName: userCreateFunction
+      Handler: lambda/AuthHandlers.registerHandler
       Policies: *commonPolicies
       Events:
         PostApi:
           Type: Api
           Properties:
             RestApiId: !Ref tweeterApi
-            Path: /user/create  ##### TODO: Set Path
+            Path: /user/create
             Method: POST
 
   #
@@ -309,6 +666,161 @@ Resources:
             Path: /followee/list
             Method: POST
   # ++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  # Additional Lambda functions
+  FollowersListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FollowersListFunction
+      Handler: lambda/FollowHandlers.followersListHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /follower/list
+            Method: POST
+
+  IsFollowerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: IsFollowerFunction
+      Handler: lambda/FollowHandlers.isFollowerHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /follow/isfollower
+            Method: POST
+
+  FollowFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FollowFunction
+      Handler: lambda/FollowHandlers.followHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /follow/follow
+            Method: POST
+
+  UnfollowFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: UnfollowFunction
+      Handler: lambda/FollowHandlers.unfollowHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /follow/unfollow
+            Method: POST
+
+  FollowerCountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FollowerCountFunction
+      Handler: lambda/FollowHandlers.followerCountHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /follow/follower/count
+            Method: POST
+
+  FolloweeCountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FolloweeCountFunction
+      Handler: lambda/FollowHandlers.followeeCountHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /follow/followee/count
+            Method: POST
+
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: LoginFunction
+      Handler: lambda/AuthHandlers.loginHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /user/login
+            Method: POST
+
+  LogoutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: LogoutFunction
+      Handler: lambda/AuthHandlers.logoutHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /user/logout
+            Method: POST
+
+  PostStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: PostStatusFunction
+      Handler: lambda/AuthHandlers.postStatusHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /status/post
+            Method: POST
+
+  FeedListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FeedListFunction
+      Handler: lambda/StatusHandlers.feedListHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /feed/list
+            Method: POST
+
+  StoryListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: StoryListFunction
+      Handler: lambda/StatusHandlers.storyListHandler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /story/list
+            Method: POST
 
 
   #

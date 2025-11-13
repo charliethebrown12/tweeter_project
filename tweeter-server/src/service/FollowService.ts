@@ -3,16 +3,12 @@ import { PagedUserItemRequest } from 'tweeter-shared/src/model/net/Request';
 
 // This is the SERVER-SIDE service. It does the REAL work.
 export class FollowService {
-
   /**
    * This method matches the one we've been building for the 'getFollowees'
-   * feature. The Lambda handler will parse the 'PagedUserItemRequest' 
+   * feature. The Lambda handler will parse the 'PagedUserItemRequest'
    * and pass it directly to this method.
    */
-  public async getMoreFollowees(
-    request: PagedUserItemRequest
-  ): Promise<[User[], boolean]> {
-    
+  public async getMoreFollowees(request: PagedUserItemRequest): Promise<[User[], boolean]> {
     // We need to get the 'lastFollowee' as a User object to pass to FakeData,
     // but the request only gives us the alias (string).
     let lastFollowee: User | null = null;
@@ -25,7 +21,23 @@ export class FollowService {
     return FakeData.instance.getPageOfUsers(
       lastFollowee,
       request.pageSize,
-      request.targetUserAlias
+      request.targetUserAlias,
+    );
+  }
+
+  /**
+   * Return a page of followers for the target user.
+   */
+  public async getMoreFollowers(request: PagedUserItemRequest): Promise<[User[], boolean]> {
+    let lastFollower: User | null = null;
+    if (request.lastItemAlias) {
+      lastFollower = FakeData.instance.findUserByAlias(request.lastItemAlias);
+    }
+
+    return FakeData.instance.getPageOfUsers(
+      lastFollower,
+      request.pageSize,
+      request.targetUserAlias,
     );
   }
 
@@ -39,7 +51,7 @@ export class FollowService {
     _authToken: AuthToken,
     userAlias: string,
     pageSize: number,
-    lastFollower: User | null
+    lastFollower: User | null,
   ): Promise<[User[], boolean]> {
     return FakeData.instance.getPageOfUsers(lastFollower, pageSize, userAlias);
   }
@@ -47,39 +59,27 @@ export class FollowService {
   public async isFollower(
     _authToken: AuthToken,
     _currentUser: User,
-    _displayedUser: User
+    _displayedUser: User,
   ): Promise<boolean> {
     return FakeData.instance.isFollower();
   }
 
-  public async getFolloweeCount(
-    _authToken: AuthToken, 
-    user: User
-  ): Promise<number> {
+  public async getFolloweeCount(_authToken: AuthToken, user: User): Promise<number> {
     return FakeData.instance.getFolloweeCount(user.alias);
   }
 
-  public async getFollowerCount(
-    _authToken: AuthToken, 
-    user: User
-  ): Promise<number> {
+  public async getFollowerCount(_authToken: AuthToken, user: User): Promise<number> {
     return FakeData.instance.getFollowerCount(user.alias);
   }
 
-  public async follow(
-    _authToken: AuthToken, 
-    userToFollow: User
-  ): Promise<[number, number]> {
+  public async follow(_authToken: AuthToken, userToFollow: User): Promise<[number, number]> {
     await new Promise((r) => setTimeout(r, 200));
     const followerCount = await this.getFollowerCount(_authToken, userToFollow);
     const followeeCount = await this.getFolloweeCount(_authToken, userToFollow);
     return [followerCount, followeeCount];
   }
 
-  public async unfollow(
-    _authToken: AuthToken, 
-    userToUnfollow: User
-  ): Promise<[number, number]> {
+  public async unfollow(_authToken: AuthToken, userToUnfollow: User): Promise<[number, number]> {
     await new Promise((r) => setTimeout(r, 200));
     const followerCount = await this.getFollowerCount(_authToken, userToUnfollow);
     const followeeCount = await this.getFolloweeCount(_authToken, userToUnfollow);

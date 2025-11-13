@@ -46,6 +46,7 @@ export class Status {
     return segments;
   }
 
+
   private static getSortedReferences(post: string): PostSegment[] {
     const references = [
       ...Status.parseUrlReferences(post),

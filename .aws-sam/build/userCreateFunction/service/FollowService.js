@@ -21,6 +21,16 @@ class FollowService {
         return tweeter_shared_1.FakeData.instance.getPageOfUsers(lastFollowee, request.pageSize, request.targetUserAlias);
     }
     /**
+     * Return a page of followers for the target user.
+     */
+    async getMoreFollowers(request) {
+        let lastFollower = null;
+        if (request.lastItemAlias) {
+            lastFollower = tweeter_shared_1.FakeData.instance.findUserByAlias(request.lastItemAlias);
+        }
+        return tweeter_shared_1.FakeData.instance.getPageOfUsers(lastFollower, request.pageSize, request.targetUserAlias);
+    }
+    /**
      * These other methods are not yet refactored to use request objects.
      * Their Lambda handlers will parse the request and call these methods
      * with the original M2 parameters.

@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "curl-feed-story-smoke",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"API=$(awk -F '\"' '/Value:/ {print $2}' /home/charles12/tweeter_project/tweeter-server/.aws-sam/build/template.yaml | head -n1 || true); if [ -z \"$API\" ]; then API=https://f4qppccqjk.execute-api.us-east-1.amazonaws.com/prod; fi; echo Using $API; echo 'POST /feed/list'; curl -s -i -X OPTIONS $API/feed/list | head -n 20; curl -s -X POST -H 'Content-Type: application/json' $API/feed/list -d '{\"targetUserAlias\":\"@alice\",\"pageSize\":5,\"lastItemTimestamp\":null}' | sed -e 's/{\"items\":\\[.*/{\"items\":[...],\"hasMore\":true,\"success\":true}/'; echo; echo 'POST /story/list'; curl -s -i -X OPTIONS $API/story/list | head -n 20; curl -s -X POST -H 'Content-Type: application/json' $API/story/list -d '{\"targetUserAlias\":\"@alice\",\"pageSize\":5,\"lastItemTimestamp\":null}' | sed -e 's/{\"items\":\\[.*/{\"items\":[...],\"hasMore\":true,\"success\":true}/'"
+			],
+			"group": "build"
+		}
+	]
+}
