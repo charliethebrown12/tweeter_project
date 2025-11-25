@@ -1,5 +1,6 @@
 import { UserDto, PagedUserItemRequest, PagedUserItemResponse } from 'tweeter-shared';
 import { FollowService } from '../service/FollowService';
+import { createRuntimeDaoFactory } from '../dao/RuntimeDaoFactory';
 
 // The handler function
 export const handler = async (event: any): Promise<any> => {
@@ -13,7 +14,8 @@ export const handler = async (event: any): Promise<any> => {
 
   // 2. Delegate to the service
   // (You'll need to instantiate your service)
-  const service = new FollowService();
+  const factory = createRuntimeDaoFactory();
+  const service = new FollowService(factory);
   const [users, hasMore] = await service.getMoreFollowees(request);
 
   const dtos: UserDto[] = users.map(

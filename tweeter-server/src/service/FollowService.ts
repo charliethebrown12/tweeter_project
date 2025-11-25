@@ -1,8 +1,13 @@
-import { AuthToken, User, FakeData, } from 'tweeter-shared';
+import { AuthToken, User } from 'tweeter-shared';
 import { PagedUserItemRequest } from 'tweeter-shared/src/model/net/Request';
+import { IDaoFactory } from '../dao/interfaces/IDaoFactory';
 
 // This is the SERVER-SIDE service. It does the REAL work.
 export class FollowService {
+  private followDao;
+  constructor(private factory: IDaoFactory) {
+    this.followDao = this.factory.createFollowDao();
+  }
   /**
    * This method matches the one we've been building for the 'getFollowees'
    * feature. The Lambda handler will parse the 'PagedUserItemRequest'
@@ -11,34 +16,14 @@ export class FollowService {
   public async getMoreFollowees(request: PagedUserItemRequest): Promise<[User[], boolean]> {
     // We need to get the 'lastFollowee' as a User object to pass to FakeData,
     // but the request only gives us the alias (string).
-    let lastFollowee: User | null = null;
-    if (request.lastItemAlias) {
-      // We assume FakeData has a method to find a user by their alias.
-      lastFollowee = FakeData.instance.findUserByAlias(request.lastItemAlias);
-    }
-
-    // Call FakeData with the parameters from the request
-    return FakeData.instance.getPageOfUsers(
-      lastFollowee,
-      request.pageSize,
-      request.targetUserAlias,
-    );
+  return this.followDao.getFollowees(request.targetUserAlias, request.pageSize, request.lastItemAlias || null);
   }
 
   /**
    * Return a page of followers for the target user.
    */
   public async getMoreFollowers(request: PagedUserItemRequest): Promise<[User[], boolean]> {
-    let lastFollower: User | null = null;
-    if (request.lastItemAlias) {
-      lastFollower = FakeData.instance.findUserByAlias(request.lastItemAlias);
-    }
-
-    return FakeData.instance.getPageOfUsers(
-      lastFollower,
-      request.pageSize,
-      request.targetUserAlias,
-    );
+  return this.followDao.getFollowers(request.targetUserAlias, request.pageSize, request.lastItemAlias || null);
   }
 
   /**
@@ -53,7 +38,7 @@ export class FollowService {
     pageSize: number,
     lastFollower: User | null,
   ): Promise<[User[], boolean]> {
-    return FakeData.instance.getPageOfUsers(lastFollower, pageSize, userAlias);
+  return this.followDao.getFollowers(userAlias, pageSize, lastFollower ? lastFollower.alias : null);
   }
 
   public async isFollower(
@@ -61,28 +46,30 @@ export class FollowService {
     _currentUser: User,
     _displayedUser: User,
   ): Promise<boolean> {
-    return FakeData.instance.isFollower();
+  return this.followDao.isFollower(_currentUser.alias, _displayedUser.alias);
   }
 
   public async getFolloweeCount(_authToken: AuthToken, user: User): Promise<number> {
-    return FakeData.instance.getFolloweeCount(user.alias);
+  return this.followDao.getFolloweeCount(user.alias);
   }
 
   public async getFollowerCount(_authToken: AuthToken, user: User): Promise<number> {
-    return FakeData.instance.getFollowerCount(user.alias);
+  return this.followDao.getFollowerCount(user.alias);
   }
 
   public async follow(_authToken: AuthToken, userToFollow: User): Promise<[number, number]> {
-    await new Promise((r) => setTimeout(r, 200));
-    const followerCount = await this.getFollowerCount(_authToken, userToFollow);
-    const followeeCount = await this.getFolloweeCount(_authToken, userToFollow);
-    return [followerCount, followeeCount];
+  await new Promise((r) => setTimeout(r, 200));
+  await this.followDao.follow((_authToken as unknown) as string, userToFollow.alias);
+  const followerCount = await this.getFollowerCount(_authToken, userToFollow);
+  const followeeCount = await this.getFolloweeCount(_authToken, userToFollow);
+  return [followerCount, followeeCount];
   }
 
   public async unfollow(_authToken: AuthToken, userToUnfollow: User): Promise<[number, number]> {
-    await new Promise((r) => setTimeout(r, 200));
-    const followerCount = await this.getFollowerCount(_authToken, userToUnfollow);
-    const followeeCount = await this.getFolloweeCount(_authToken, userToUnfollow);
-    return [followerCount, followeeCount];
+  await new Promise((r) => setTimeout(r, 200));
+  await this.followDao.unfollow((_authToken as unknown) as string, userToUnfollow.alias);
+  const followerCount = await this.getFollowerCount(_authToken, userToUnfollow);
+  const followeeCount = await this.getFolloweeCount(_authToken, userToUnfollow);
+  return [followerCount, followeeCount];
   }
 }
