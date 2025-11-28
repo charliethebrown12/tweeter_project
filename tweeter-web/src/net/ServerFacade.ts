@@ -246,24 +246,49 @@ export class ServerFacade {
     lastName: string,
     alias: string,
     password: string,
-    imageUrl: string,
+    imageUrl: string, // data URL from the client
   ): Promise<{ authToken: string; alias: string }> {
+    // imageUrl is typically: "data:image/png;base64,AAAA..."
+    let imageBytesBase64 = '';
+    let imageType = 'image/png'; // sensible default
+
+    if (imageUrl && imageUrl.startsWith('data:')) {
+      const parts = imageUrl.split(',');
+      if (parts.length === 2) {
+        const meta = parts[0]; // e.g. "data:image/png;base64"
+        const base64 = parts[1]; // e.g. "AAAA..."
+
+        const match = /^data:(.*);base64$/.exec(meta);
+        if (match && match[1]) {
+          imageType = match[1]; // e.g. "image/png"
+        }
+
+        imageBytesBase64 = base64;
+      } else {
+        throw new Error('Invalid image data URL format.');
+      }
+    } else {
+      throw new Error('Image data URL is required.');
+    }
+
+    const request = new RegisterRequest(
+      firstName,
+      lastName,
+      alias,
+      password,
+      imageBytesBase64,
+      imageType,
+    );
+
     const response = await this.clientCommunicator.doPost<RegisterRequest, AuthResponse>(
-      new RegisterRequest(firstName, lastName, alias, password, imageUrl),
+      request,
       '/user/create',
     );
+
     if (response.success && response.authToken && response.alias) {
       return { authToken: response.authToken, alias: response.alias };
     } else {
       throw new Error(response.message ?? 'Register failed');
     }
-  }
-
-  public async postStatus(authToken: string, post: string): Promise<void> {
-    const response = await this.clientCommunicator.doPost<PostStatusRequest, AuthResponse>(
-      new PostStatusRequest(authToken, post),
-      '/status/post',
-    );
-    if (!response.success) throw new Error(response.message ?? 'Post failed');
   }
 }
