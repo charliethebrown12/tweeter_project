@@ -6,4 +6,5 @@ export interface IAuthDao {
   deleteSession(token: string): Promise<void>;
   getPasswordHashForUser(alias: string): Promise<string | null>;
   setPasswordHashForUser(alias: string, hash: string): Promise<void>;
+  getAliasForToken(token: string): Promise<string | null>;
 }

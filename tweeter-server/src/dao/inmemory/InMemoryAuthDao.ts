@@ -18,4 +18,11 @@ export class InMemoryAuthDao implements IAuthDao {
   public async setPasswordHashForUser(alias: string, hash: string): Promise<void> {
     return;
   }
+  public async getAliasForToken(token: string): Promise<string | null> {
+    if (FakeData.instance.authToken.token === token) {
+      const user = FakeData.instance.firstUser;
+      return user ? user.alias : null;
+    }
+    return null;
+  }
 }

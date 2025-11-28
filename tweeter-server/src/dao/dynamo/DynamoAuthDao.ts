@@ -9,6 +9,7 @@ const USERS_TABLE = process.env.USERS_TABLE || 'TweeterUsers';
 
 export class DynamoAuthDao implements IAuthDao {
   private client: DynamoDBDocumentClient;
+  private readonly SESSIONS_TABLE = process.env.SESSIONS_TABLE || 'TweeterSessions';
   constructor() {
     const c = new DynamoDBClient({});
     this.client = DynamoDBDocumentClient.from(c);
@@ -22,7 +23,10 @@ export class DynamoAuthDao implements IAuthDao {
 
   public async createSession(alias: string): Promise<AuthToken> {
     const tok = AuthToken.Generate();
-    const cmd = new PutCommand({ TableName: SESSIONS_TABLE, Item: { token: tok.token, alias, timestamp: tok.timestamp } });
+    const cmd = new PutCommand({
+      TableName: SESSIONS_TABLE,
+      Item: { token: tok.token, alias, timestamp: tok.timestamp },
+    });
     await this.client.send(cmd as any);
     return tok;
   }
@@ -33,7 +37,11 @@ export class DynamoAuthDao implements IAuthDao {
   }
 
   public async getPasswordHashForUser(alias: string): Promise<string | null> {
-    const cmd = new GetCommand({ TableName: USERS_TABLE, Key: { alias }, ProjectionExpression: 'passwordHash' });
+    const cmd = new GetCommand({
+      TableName: USERS_TABLE,
+      Key: { alias },
+      ProjectionExpression: 'passwordHash',
+    });
     const resp = (await this.client.send(cmd as any)) as any;
     if (!resp || !resp.Item) return null;
     return resp.Item.passwordHash || null;
@@ -42,5 +50,21 @@ export class DynamoAuthDao implements IAuthDao {
   public async setPasswordHashForUser(alias: string, hash: string): Promise<void> {
     const cmd = new PutCommand({ TableName: USERS_TABLE, Item: { alias, passwordHash: hash } });
     await this.client.send(cmd as any);
+  }
+
+  public async getAliasForToken(token: string): Promise<string | null> {
+    const result: any = await this.client.send(
+      new GetCommand({
+        TableName: this.SESSIONS_TABLE,
+        Key: { token },
+        ProjectionExpression: 'alias',
+      }) as any,
+    );
+
+    if (!result || !result.Item) {
+      return null;
+    } else {
+      return result.Item.alias as string;
+    }
   }
 }

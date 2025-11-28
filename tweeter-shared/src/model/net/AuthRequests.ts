@@ -15,14 +15,23 @@ export class RegisterRequest extends TweeterRequest {
   public readonly lastName: string;
   public readonly alias: string;
   public readonly password: string;
-  public readonly imageUrl: string;
-  constructor(firstName: string, lastName: string, alias: string, password: string, imageUrl: string) {
+  public readonly imageBytesBase64: string;
+  public readonly imageType: string;
+  constructor(
+    firstName: string,
+    lastName: string,
+    alias: string,
+    password: string,
+    imageBytesBase64: string,
+    imageType: string,
+  ) {
     super(null);
     this.firstName = firstName;
     this.lastName = lastName;
     this.alias = alias;
     this.password = password;
-    this.imageUrl = imageUrl;
+    this.imageBytesBase64 = imageBytesBase64;
+    this.imageType = imageType;
   }
 }
 

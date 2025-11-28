@@ -1,24 +1,43 @@
-import { PagedStatusItemRequest, Status } from 'tweeter-shared';
+import { PagedStatusItemRequest, Status, AuthToken } from 'tweeter-shared';
 import { IDaoFactory } from '../dao/interfaces/IDaoFactory';
+import { AuthorizationService } from './AuthorizationService';
 
 export class StatusService {
-  private statusDao;
-  constructor(private factory: IDaoFactory) {
+  private readonly statusDao;
+  private readonly authService: AuthorizationService;
+
+  constructor(private readonly factory: IDaoFactory) {
     this.statusDao = this.factory.createStatusDao();
+    this.authService = new AuthorizationService(this.factory);
   }
 
   public async getMoreFeedItems(request: PagedStatusItemRequest): Promise<[Status[], boolean]> {
-    return this.statusDao.getFeedItems(request.targetUserAlias || null, request.pageSize, request.lastItemTimestamp || null);
+    const callerAlias = await this.authService.authorize(request.authToken as any);
+
+    const targetAlias = request.targetUserAlias || callerAlias;
+
+    return this.statusDao.getFeedItems(
+      targetAlias,
+      request.pageSize,
+      request.lastItemTimestamp || null,
+    );
   }
 
   public async getMoreStoryItems(request: PagedStatusItemRequest): Promise<[Status[], boolean]> {
-    return this.statusDao.getStoryItems(request.targetUserAlias || '', request.pageSize, request.lastItemTimestamp || null);
+    await this.authService.authorize(request.authToken as any);
+
+    const targetAlias = request.targetUserAlias || '';
+
+    return this.statusDao.getStoryItems(
+      targetAlias,
+      request.pageSize,
+      request.lastItemTimestamp || null,
+    );
   }
 
-  public async postStatus(authToken: string, post: string): Promise<boolean> {
-    // For M4: still using FakeData via InMemory DAO; we use authToken only to determine author in later phases.
+  public async postStatus(auth: AuthToken | string | null, post: string): Promise<boolean> {
+    const authorAlias = await this.authService.authorize(auth);
     const timestamp = Date.now();
-    const authorAlias = null as unknown as string; // M3 preserved behavior: use first user inside DAO
     return this.statusDao.postStatus(authorAlias, post, timestamp);
   }
 }
