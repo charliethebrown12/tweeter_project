@@ -18,7 +18,7 @@ export class InMemoryDaoFactory implements IDaoFactory {
     return new InMemoryUserDao();
   }
   createStatusDao(): IStatusDao {
-    return new InMemoryStatusDao();
+  return new InMemoryStatusDao();
   }
   createFollowDao(): IFollowDao {
     return new InMemoryFollowDao();

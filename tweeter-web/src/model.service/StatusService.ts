@@ -15,6 +15,7 @@ export class StatusService implements Service {
       userAlias,
       pageSize,
       lastItem ? lastItem.timestamp : null,
+      authToken?.token || null,
     );
     return this.serverFacade.getMoreFeed(request);
   }
@@ -29,13 +30,14 @@ export class StatusService implements Service {
       userAlias,
       pageSize,
       lastItem ? lastItem.timestamp : null,
+      authToken?.token || null,
     );
     return this.serverFacade.getMoreStory(request);
   }
 
   public async postStatus(_authToken: AuthToken, _newStatus: Status): Promise<void> {
-    // TODO: Replace with server call to post status
-    // Simulate delay
-    await new Promise((r) => setTimeout(r, 500));
+  if (!_authToken || !_authToken.token) throw new Error('Not authenticated');
+  if (!_newStatus || !_newStatus.post?.trim()) throw new Error('Post text is required');
+  await this.serverFacade.postStatus(_authToken.token, _newStatus.post);
   }
 }

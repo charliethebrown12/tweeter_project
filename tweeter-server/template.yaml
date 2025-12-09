@@ -16,12 +16,16 @@ Globals:
     MemorySize: 128
     Environment:
       Variables:
+        DAO_IMPL: dynamo
         USERS_TABLE: TweeterUsers
         SESSIONS_TABLE: TweeterSessions
-        STORY_TABLE: TweeterStory
+        STORY_TABLE: TweeterStories
         FEED_TABLE: TweeterFeed
         FOLLOWS_TABLE: TweeterFollows
         FOLLOWEE_INDEX: FolloweeIndex
+        S3_BUCKET: !Ref TweeterUploadsBucket
+        POST_QUEUE_URL: !Ref PostQueue
+        JOB_QUEUE_URL: !Ref JobQueue
 
 
 #
@@ -530,7 +534,7 @@ Resources:
                 type: aws
                 httpMethod: POST
                 uri:
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostStatusFunction.Arn}/invocations
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostStatusAsyncFunction.Arn}/invocations
                 requestTemplates: *commonRequestTemplates
                 responses: *commonAmazonResponses
               responses: *commonSwaggerResponses
@@ -629,11 +633,18 @@ Resources:
   #
   # SQS Queues  (This will become relevant in Milestone 4. For M3, leave this section commented out.)
   #
-
-  #   MyQueue:
-  #     Type: AWS::SQS::Queue
-  #     Properties:
-  #       QueueName: MyQueue
+  PostQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: TweeterPostQueue
+      VisibilityTimeout: 60
+      MessageRetentionPeriod: 3600
+  JobQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: TweeterFanOutJobQueue
+      VisibilityTimeout: 60
+      MessageRetentionPeriod: 3600
 
 
   #
@@ -816,12 +827,30 @@ Resources:
             Path: /user/logout
             Method: POST
 
-  PostStatusFunction:
+ #  PostStatusFunction:
+  #  Type: AWS::Serverless::Function
+   # Properties:
+    #  FunctionName: PostStatusFunction
+     # Handler: lambda/AuthHandlers.postStatusHandler
+      #Policies: *commonPolicies
+      #Events:
+       # PostApi:
+        #  Type: Api
+         # Properties:
+          #  RestApiId: !Ref tweeterApi
+           # Path: /status/post
+            #Method: POST
+
+  # Async Post handler (enqueue to SQS)
+  PostStatusAsyncFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: PostStatusFunction
-      Handler: lambda/AuthHandlers.postStatusHandler
+      FunctionName: PostStatusAsyncFunction
+      Handler: lambda/StatusAsyncHandlers.postStatusAsyncHandler
       Policies: *commonPolicies
+      Environment:
+        Variables:
+          POST_QUEUE_URL: !Ref PostQueue
       Events:
         PostApi:
           Type: Api
@@ -875,6 +904,37 @@ Resources:
   #           Properties:
   #             Queue: !GetAtt MyQueue.Arn
   #             Enabled: true
+  FollowFetcherFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FollowFetcherFunction
+      Handler: lambda/StatusAsyncHandlers.followFetcherHandler
+      Policies: *commonPolicies
+      Environment:
+        Variables:
+          JOB_QUEUE_URL: !Ref JobQueue
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt PostQueue.Arn
+            BatchSize: 5
+            Enabled: true
+            MaximumBatchingWindowInSeconds: 1
+  JobHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: JobHandlerFunction
+      Handler: lambda/StatusAsyncHandlers.jobHandler
+      Policies: *commonPolicies
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt JobQueue.Arn
+            BatchSize: 5
+            Enabled: true
+            MaximumBatchingWindowInSeconds: 1
 
 
   #
@@ -988,6 +1048,19 @@ Resources:
   #
   # TODO: ADD MORE TABLE DEFINITIONS HERE
   #
+  
+  # S3 bucket for user profile images
+  TweeterUploadsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
   
 #
 # +++ THE OUTPUTS BLOCK +++

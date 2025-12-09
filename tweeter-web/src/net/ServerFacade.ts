@@ -21,7 +21,7 @@ import {
   LogoutRequest,
   PostStatusRequest,
 } from 'tweeter-shared/src/model/net/AuthRequests';
-import { AuthResponse } from 'tweeter-shared/src/model/net/AuthResponses';
+import { AuthResponse, PostStatusResponse } from 'tweeter-shared/src/model/net/AuthResponses';
 
 export class ServerFacade {
   private SERVER_URL: string;
@@ -108,9 +108,9 @@ export class ServerFacade {
     }
   }
 
-  public async getFollowerCount(alias: string): Promise<number> {
+  public async getFollowerCount(auth: { token: string } | null, alias: string): Promise<number> {
     const response = await this.clientCommunicator.doPost<AliasRequest, CountResponse>(
-      new AliasRequest(alias),
+      new AliasRequest(alias, auth?.token || null),
       '/follow/follower/count',
     );
     if (response.success) {
@@ -121,9 +121,9 @@ export class ServerFacade {
     }
   }
 
-  public async getFolloweeCount(alias: string): Promise<number> {
+  public async getFolloweeCount(auth: { token: string } | null, alias: string): Promise<number> {
     const response = await this.clientCommunicator.doPost<AliasRequest, CountResponse>(
-      new AliasRequest(alias),
+      new AliasRequest(alias, auth?.token || null),
       '/follow/followee/count',
     );
     if (response.success) {
@@ -134,9 +134,13 @@ export class ServerFacade {
     }
   }
 
-  public async isFollower(followerAlias: string, followeeAlias: string): Promise<boolean> {
+  public async isFollower(
+    auth: { token: string } | null,
+    followerAlias: string,
+    followeeAlias: string,
+  ): Promise<boolean> {
     const response = await this.clientCommunicator.doPost<IsFollowerRequest, BooleanResponse>(
-      new IsFollowerRequest(followerAlias, followeeAlias),
+      new IsFollowerRequest(followerAlias, followeeAlias, auth?.token || null),
       '/follow/isfollower',
     );
     if (response.success) {
@@ -147,11 +151,15 @@ export class ServerFacade {
     }
   }
 
-  public async follow(actorAlias: string, targetAlias: string): Promise<[number, number]> {
+  public async follow(
+    auth: { token: string } | null,
+    actorAlias: string,
+    targetAlias: string,
+  ): Promise<[number, number]> {
     const response = await this.clientCommunicator.doPost<
       FollowActionRequest,
       FollowCountsResponse
-    >(new FollowActionRequest(actorAlias, targetAlias), '/follow/follow');
+    >(new FollowActionRequest(actorAlias, targetAlias, auth?.token || null), '/follow/follow');
     if (response.success) {
       return [response.followerCount, response.followeeCount];
     } else {
@@ -160,11 +168,15 @@ export class ServerFacade {
     }
   }
 
-  public async unfollow(actorAlias: string, targetAlias: string): Promise<[number, number]> {
+  public async unfollow(
+    auth: { token: string } | null,
+    actorAlias: string,
+    targetAlias: string,
+  ): Promise<[number, number]> {
     const response = await this.clientCommunicator.doPost<
       FollowActionRequest,
       FollowCountsResponse
-    >(new FollowActionRequest(actorAlias, targetAlias), '/follow/unfollow');
+    >(new FollowActionRequest(actorAlias, targetAlias, auth?.token || null), '/follow/unfollow');
     if (response.success) {
       return [response.followerCount, response.followeeCount];
     } else {
@@ -221,7 +233,7 @@ export class ServerFacade {
     alias: string,
     password: string,
   ): Promise<{ authToken: string; alias: string }> {
-    const effectiveAlias = (alias ?? '').trim() || '@allen';
+    const effectiveAlias = (alias ?? '').trim();
     const response = await this.clientCommunicator.doPost<LoginRequest, AuthResponse>(
       new LoginRequest(effectiveAlias, password),
       '/user/login',
@@ -289,6 +301,16 @@ export class ServerFacade {
       return { authToken: response.authToken, alias: response.alias };
     } else {
       throw new Error(response.message ?? 'Register failed');
+    }
+  }
+
+  public async postStatus(authToken: string, post: string): Promise<void> {
+    const response = await this.clientCommunicator.doPost<PostStatusRequest, PostStatusResponse>(
+      new PostStatusRequest(authToken, post),
+      '/status/post',
+    );
+    if (!response.success) {
+      throw new Error(response.message ?? 'Post status failed');
     }
   }
 }

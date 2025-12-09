@@ -1,4 +1,4 @@
-import { User, FakeData, AuthToken } from 'tweeter-shared';
+import { User, AuthToken } from 'tweeter-shared';
 import { Service } from './Service';
 import { ServerFacade } from 'src/net/ServerFacade';
 
@@ -23,13 +23,13 @@ export class UserService implements Service {
     _userImageBytes: Uint8Array,
     _imageFileExtension: string,
   ): Promise<[User, AuthToken]> {
-    const imageUrl = 'https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png';
+    const dataUrl = this.bytesToDataUrl(_userImageBytes, _imageFileExtension);
     const { authToken, alias } = await this.serverFacade.register(
       _firstName,
       _lastName,
       _alias,
       _password,
-      imageUrl,
+      dataUrl,
     );
     const user = await this.getUser({ token: authToken } as AuthToken, alias);
     if (!user) throw new Error('Invalid registration');
@@ -40,5 +40,40 @@ export class UserService implements Service {
     if (_authToken?.token) {
       await this.serverFacade.logout(_authToken.token);
     }
+  }
+
+  private bytesToDataUrl(bytes: Uint8Array, fileExt: string): string {
+    if (!bytes || bytes.length === 0) throw new Error('Missing image bytes');
+    const mime = this.extensionToMime(fileExt);
+    const base64 = this.uint8ToBase64(bytes);
+    return `data:${mime};base64,${base64}`;
+  }
+
+  private extensionToMime(ext: string): string {
+    const e = (ext || '').toLowerCase();
+    switch (e) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      default:
+        return 'image/png';
+    }
+  }
+
+  private uint8ToBase64(bytes: Uint8Array): string {
+    let binary = '';
+    const chunkSize = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, i + chunkSize);
+      binary += String.fromCharCode.apply(null, Array.from(chunk));
+    }
+    // btoa is available in browsers; this code runs in the browser
+    return btoa(binary);
   }
 }

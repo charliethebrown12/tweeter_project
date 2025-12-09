@@ -1,25 +1,14 @@
 import { IFollowDao } from '../interfaces/IFollowDao';
 import { User } from 'tweeter-shared';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import {
-  DynamoDBDocumentClient,
-  QueryCommand,
-  PutCommand,
-  DeleteCommand,
-  BatchGetCommand,
-} from '@aws-sdk/lib-dynamodb';
+import { QueryCommand, PutCommand, DeleteCommand, BatchGetCommand } from '@aws-sdk/lib-dynamodb';
+import { dynamoDocClient } from './awsClients';
 
 const FOLLOWS_TABLE = process.env.FOLLOWS_TABLE || 'TweeterFollows';
 const USERS_TABLE = process.env.USERS_TABLE || 'TweeterUsers';
 const FOLLOWEE_INDEX = process.env.FOLLOWEE_INDEX || 'FolloweeIndex';
 
 export class DynamoFollowDao implements IFollowDao {
-  private readonly client: DynamoDBDocumentClient;
-
-  constructor() {
-    const c = new DynamoDBClient({});
-    this.client = DynamoDBDocumentClient.from(c);
-  }
+  private readonly client = dynamoDocClient;
 
   public async follow(followerAlias: string, followeeAlias: string): Promise<void> {
     const cmd = new PutCommand({

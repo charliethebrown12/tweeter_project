@@ -1,47 +1,47 @@
 import './PostStatus.css';
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Status } from 'tweeter-shared';
 import { useMessageActions } from '../toaster/MessageHooks';
 import { useUserInfo } from '../userInfo/UserHooks';
 import { PostStatusPresenter, PostStatusView } from 'src/presenter/PostStatusPresenter';
 
 const PostStatus = (props?: { presenter?: PostStatusPresenter }) => {
-  const { displayErrorMessage, displayInfoMessage, deleteMessage } = useMessageActions();
+  const { displayErrorMessage } = useMessageActions();
+  const navigate = useNavigate();
 
   const { currentUser, authToken } = useUserInfo();
   const [post, setPost] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const viewRef = useRef<PostStatusView>({
-    displayInfoMessage: (message: string, duration: number, bootstrapClasses?: string) =>
-      displayInfoMessage(message, duration, bootstrapClasses),
-    deleteMessage: (messageId: string) => deleteMessage(messageId),
+    displayInfoMessage: () => '',
+    deleteMessage: () => {},
     displayErrorMessage: (message: string, bootstrapClasses?: string) =>
       displayErrorMessage(message, bootstrapClasses),
     clearPost: () => setPost(''),
   });
 
   const presenterRef = useRef<PostStatusPresenter | null>(null);
-  if (!presenterRef.current) presenterRef.current = props?.presenter || new PostStatusPresenter(viewRef.current);
+  if (!presenterRef.current)
+    presenterRef.current = props?.presenter || new PostStatusPresenter(viewRef.current);
 
   const submitPost = async (event: React.MouseEvent) => {
     event.preventDefault();
 
-    var postingStatusToastId = '';
-
     try {
       setIsLoading(true);
-      postingStatusToastId = displayInfoMessage('Posting status...', 0);
 
       const status = new Status(post, currentUser!, Date.now());
 
       await presenterRef.current!.postStatus(authToken!, status);
 
       setPost('');
+      // After successful post, take the user to their story so they can see it immediately
+      navigate(`/story/${currentUser!.alias}`);
     } catch (error) {
       displayErrorMessage(`Failed to post the status because of exception: ${error}`);
     } finally {
-      deleteMessage(postingStatusToastId);
       setIsLoading(false);
     }
   };

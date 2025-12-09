@@ -19,4 +19,17 @@ export class InMemoryStatusDao implements IStatusDao {
     FakeData.instance.fakeStatuses.push(status);
     return true;
   }
+
+    public async batchWriteFeedItems(items: {
+      userAlias: string;
+      timestamp: number;
+      post: string;
+      authorAlias: string;
+      authorFirstName: string;
+      authorLastName: string;
+      authorImageUrl: string;
+    }[]): Promise<void> {
+      // no-op for in-memory implementation
+      return;
+    }
 }

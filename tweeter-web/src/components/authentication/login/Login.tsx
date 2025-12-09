@@ -63,6 +63,9 @@ const Login = (props: Props) => {
   const doLogin = async () => {
     try {
       setIsLoading(true);
+      // Keep presenter state in sync with the form values before authenticating
+      presenterRef.current!.setAlias(alias);
+      presenterRef.current!.setPassword(password);
       await presenterRef.current!.login(props.originalUrl);
     } finally {
       setIsLoading(false);
@@ -80,7 +83,12 @@ const Login = (props: Props) => {
           placeholder="name@example.com"
           type="text"
           onKeyDown={loginOnEnter}
-          onChange={(event) => setAlias(event.target.value)}
+          onChange={(event) => {
+            const v = event.target.value;
+            setAlias(v);
+            presenterRef.current!.setAlias(v);
+          }}
+          value={alias}
         />
         <AuthenticationFields
           id="passwordInput"
@@ -88,7 +96,12 @@ const Login = (props: Props) => {
           placeholder="Password"
           type="password"
           onKeyDown={loginOnEnter}
-          onChange={(event) => setPassword(event.target.value)}
+          onChange={(event) => {
+            const v = event.target.value;
+            setPassword(v);
+            presenterRef.current!.setPassword(v);
+          }}
+          value={password}
         />
       </>
     );
